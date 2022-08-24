@@ -20,9 +20,18 @@ jobs:
         id: image-cache
 
       - name: build-image
-      - if: steps.image-cache,output,.cache-hit != 'true'
-      - uses: docker/build-push-action@v3
+        if: steps.image-cache,output,.cache-hit != 'true'
+        uses: docker/build-push-action@v3
         with:    
           context: .
           tags: myimage:latest
           outputs: type=docker,dest=/tmp/myimage.tar
+
+      - name: import-image
+        run: |  
+          docker import - myimage < myimage.tar
+
+      - name: run-cmd
+        run: |
+          docker run --rm myimage /bin/sh -c "hello world"
+      

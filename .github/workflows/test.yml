@@ -12,8 +12,8 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
-      run: |
-        echo ${PWD}
-        find .
+      - run: |
+         echo ${PWD}
+         find .
 
 

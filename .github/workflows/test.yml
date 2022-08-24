@@ -18,4 +18,4 @@ jobs:
           uname -a
           docker info
           df -h
-          docker images ls
+          docker image ls

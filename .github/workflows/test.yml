@@ -12,5 +12,17 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
-      - run: |
-          cat /mnt/DATALOSS_WARNING_README.txt
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v2
+      - uses: actions/cache@v2
+        with:
+          path: /tmp/myimage.tar
+        id: image-cache
+
+      - name: build-image
+      - if: steps.image-cache,output,.cache-hit != 'true'
+      - uses: docker/build-push-action@v3
+        with:    
+          context: .
+          tags: myimage:latest
+          outputs: type=docker,dest=/tmp/myimage.tar

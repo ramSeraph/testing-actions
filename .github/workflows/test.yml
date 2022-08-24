@@ -13,7 +13,4 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: |
-          df -h
-          free -h
-          cat /proc/cpuinfo
-          find /mnt/
+          cat /mnt/DATALOSS_WARNING_README.txt

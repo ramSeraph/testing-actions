@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: |
-         echo ${PWD}
-         find .
-
-
+        echo ${PWD}
+        find .
+        find ..
+      - uses: actions/checkout@v3
+      - run: |
+        echo ${PWD}
+        find .
+        find ..

@@ -16,5 +16,5 @@ jobs:
           echo ${PWD}
           id 
           uname -a
-          find /home/runner
           docker info
+          df -h

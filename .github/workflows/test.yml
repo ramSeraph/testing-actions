@@ -1,0 +1,19 @@
+name: Test Run
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  Test-Job:
+    timeout-minutes: 30
+    runs-on: ubuntu-22.04
+    steps:
+      run: |
+        echo ${PWD}
+        find .
+
+

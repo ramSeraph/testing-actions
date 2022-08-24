@@ -14,9 +14,7 @@ jobs:
     steps:
       - run: |
           echo ${PWD}
-          find .
-          find ..
-      - uses: actions/checkout@v3
-      - run: |
-          echo ${PWD}
-          find .
+          id 
+          uname -a
+          find /home/runner
+          docker info

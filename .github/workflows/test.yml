@@ -22,7 +22,7 @@ jobs:
         id: image-cache
 
       - name: build-image
-        if: steps.image-cache.output.cache-hit != 'true'
+        if: steps.image-cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@v3
         with:    
           context: .

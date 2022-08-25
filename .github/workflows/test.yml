@@ -18,6 +18,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: /tmp/myimage.tar
+          key: img-cache-${{ hashFiles('Dockerfile') }}
         id: image-cache
 
       - name: build-image

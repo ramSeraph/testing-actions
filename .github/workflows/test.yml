@@ -31,7 +31,7 @@ jobs:
 
       - name: import-image
         run: |  
-          docker import - myimage < /tmp/myimage.tar
+          docker load < /tmp/myimage.tar
 
       - name: run-cmd
         run: |

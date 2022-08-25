@@ -35,5 +35,5 @@ jobs:
 
       - name: run-cmd
         run: |
-          docker run --rm myimage /bin/sh -c "hello world"
+          docker run -it --rm --name my-running-script -v "$PWD":/app -w /app myimage python test.py
       

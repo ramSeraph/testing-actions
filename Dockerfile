@@ -1,3 +1,3 @@
-FROM buster-slim
-RUN apt-get update
+FROM alpine
+RUN echo "building"
 

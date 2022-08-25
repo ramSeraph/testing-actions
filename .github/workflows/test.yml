@@ -14,13 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
+
       - uses: actions/cache@v2
         with:
           path: /tmp/myimage.tar
         id: image-cache
 
       - name: build-image
-        if: steps.image-cache,output,.cache-hit != 'true'
+        if: steps.image-cache.output.cache-hit != 'true'
         uses: docker/build-push-action@v3
         with:    
           context: .
@@ -29,7 +30,7 @@ jobs:
 
       - name: import-image
         run: |  
-          docker import - myimage < myimage.tar
+          docker import - myimage < /tmp/myimage.tar
 
       - name: run-cmd
         run: |

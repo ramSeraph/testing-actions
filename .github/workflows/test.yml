@@ -33,7 +33,14 @@ jobs:
         run: |  
           docker load < /tmp/myimage.tar
 
+
+      - name: run-service
+        run: |
+          docker run -d --rm --name my-service -v "$PWD":/app -w /app myimage python runner.py
+
+
       - name: run-cmd
         run: |
-          docker run --rm --name my-running-script -v "$PWD":/app -w /app myimage echo "$PATH"
+          docker run --rm --name my-running-script -v "$PWD":/app -w /app myimage python test.py
+
       

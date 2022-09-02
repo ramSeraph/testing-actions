@@ -12,6 +12,9 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
+      - run: |
+        curl "http://ip-api.com/json/$(curl -s icanhazip.com)" | jq .
+
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
 

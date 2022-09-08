@@ -7,12 +7,22 @@ concurrency:
 on: 
   workflow_dispatch:
 
+env:
+  DOMAIN: "thoughtfree.space"
+  SUB_DOMAIN: "mail"
+  DIGITALOCEAN_TOKEN: "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" 
+  IP_ADDR: "0.0.0.0"
+
 jobs:
   Test-Job:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
-      - run: |
-          which doctl
+      - name: change dns record
+        run: |
+          headers="-H \"Content-Type: application/json\" -H \"Authorization: Bearer $DIGITALOCEAN_TOKEN\"" 
+          rec_id=$(curl -X GET $headers "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" | jq '.domain_records[] | select(.name=="$SUB_DOMAIN") | .id')
+          curl -X PATCH $headers --data "{ \"data\": \"${IP_ADDR}\" }" "https://api.digitalocean.com/v2/domains/$DOMAIN/records/$rec_id"
+
 
       

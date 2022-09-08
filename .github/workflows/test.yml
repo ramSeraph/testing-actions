@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
-      run: |
-        which doctl
+      - run: |
+          which doctl
 
       

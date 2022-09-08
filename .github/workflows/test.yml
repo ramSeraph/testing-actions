@@ -23,7 +23,8 @@ jobs:
           touch headers_file
           echo "Authorization: Bearer $DIGITALOCEAN_TOKEN" >> headers_file
           rec_id=$(curl -H @headers_file "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" | jq --arg sd "$SUB_DOMAIN" '.domain_records[] | select(.name=="$sd") | .id')
-          echo  "Content-Type: application/json" >> headers_file
+          echo "rec: $rec_id"
+          echo "Content-Type: application/json" >> headers_file
           curl -X PATCH -H @headers_file --data "{ \"data\": \"${IP_ADDR}\" }" "https://api.digitalocean.com/v2/domains/$DOMAIN/records/$rec_id"
 
 

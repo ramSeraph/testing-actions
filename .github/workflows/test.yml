@@ -22,9 +22,7 @@ jobs:
         run: |
           touch headers_file
           #print "Content-Type: application/json" >> headers_file
-          print "Authorization: Bearer $DIGITALOCEAN_TOKEN" >> headers_file
-          cat headers_file
-          curl --version
+          echo "Authorization: Bearer $DIGITALOCEAN_TOKEN" >> headers_file
           curl -H @headers_file https://api.digitalocean.com/v2/domains/${DOMAIN}/records 
           #rec_id=$(curl -X GET -H @headers_file "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" | jq --arg sd "$SUB_DOMAIN" '.domain_records[] | select(.name=="$sd") | .id')
           #curl -X PATCH $headers --data "{ \"data\": \"${IP_ADDR}\" }" "https://api.digitalocean.com/v2/domains/$DOMAIN/records/$rec_id"

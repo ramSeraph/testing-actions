@@ -12,38 +12,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
-      - run: |
-          curl "http://ip-api.com/json/$(curl -s icanhazip.com)" | jq .
-
-      - uses: actions/checkout@v3
-      - uses: docker/setup-buildx-action@v2
-
-      - uses: actions/cache@v2
-        with:
-          path: /tmp/myimage.tar
-          key: img-cache-${{ hashFiles('Dockerfile') }}
-        id: image-cache
-
-      - name: build-image
-        if: steps.image-cache.outputs.cache-hit != 'true'
-        uses: docker/build-push-action@v3
-        with:    
-          context: .
-          tags: myimage:latest
-          outputs: type=docker,dest=/tmp/myimage.tar
-
-      - name: import-image
-        run: |  
-          docker load < /tmp/myimage.tar
-
-
-      - name: run-service
-        run: |
-          docker run -d --rm --name my-service -v "$PWD":/app -w /app myimage python runner.py
-
-
-      - name: run-cmd
-        run: |
-          docker run --rm --name my-running-script -v "$PWD":/app -w /app myimage python test.py
+      run: |
+        which doctl
 
       

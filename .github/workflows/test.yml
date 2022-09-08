@@ -21,8 +21,7 @@ jobs:
       - name: change dns record
         run: |
           export headers="-H \"Content-Type: application/json\" -H \"Authorization: Bearer $DIGITALOCEAN_TOKEN\"" 
-          echo $headers
-          curl -X GET $headers "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" 
+          echo GET $headers "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" 
           rec_id=$(curl -X GET $headers "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" | jq --arg sd "$SUB_DOMAIN" '.domain_records[] | select(.name=="$sd") | .id')
           curl -X PATCH $headers --data "{ \"data\": \"${IP_ADDR}\" }" "https://api.digitalocean.com/v2/domains/$DOMAIN/records/$rec_id"
 

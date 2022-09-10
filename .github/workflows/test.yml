@@ -42,7 +42,5 @@ jobs:
         if: steps.release-check.outputs.hasrelease == "no"
         uses: softprops/action-gh-release@v1
           with:
-            files: |
-              asset.txt
-
+            files: asset.txt
       

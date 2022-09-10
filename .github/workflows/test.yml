@@ -32,7 +32,7 @@ jobs:
         id: release-check
         run: |
           set +e
-          echo '${{ steps.list-releases.outputs.releases }}' | jq '.[]' | grep -q $RELEASE
+          echo '${{ steps.list-releases.outputs.releases }}' | jq '.[]' | grep -q "$RELEASE"
           has_release=$?
           set -e
           if [[ $has_release ]]; then
@@ -45,6 +45,6 @@ jobs:
         if: ${{ steps.release-check.outputs.hasrelease }} == "no"
         uses: softprops/action-gh-release@v1
         with:
-          tag: $RELEASE
+          tag: "$RELEASE"
           files: asset.txt
       

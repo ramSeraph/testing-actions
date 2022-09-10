@@ -45,6 +45,6 @@ jobs:
         if: ${{ steps.release-check.outputs.hasrelease }} == "no"
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: "$RELEASE"
+          tag_name: "${{ env.RELEASE }}"
           files: asset.txt
       

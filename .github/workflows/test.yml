@@ -39,7 +39,7 @@ jobs:
           fi
       - name: Create Release
         id: create-release
-        if: steps.release-check.outputs.hasrelease == "no"
+        if: ${{ steps.release-check.outputs.hasrelease == "no" }}
         uses: softprops/action-gh-release@v1
         with:
           files: asset.txt

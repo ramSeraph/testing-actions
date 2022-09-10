@@ -7,6 +7,9 @@ concurrency:
 on: 
   workflow_dispatch:
 
+env:
+  RELEASE: dummy 
+
 jobs:
   Test-Job:
     timeout-minutes: 30
@@ -15,17 +18,31 @@ jobs:
       - name: Make a release
         run: |
           touch asset.txt
+          rand=$RANDOM
           for i in {1..50000}
           do
-            echo "blah $i" >> asset.txt
+            echo "blah $rand $i" >> asset.txt
             echo >> asset.txt
           done
       - name: List Releases
         id: list-releases
         uses: github-actions-tools/gh-list-releases@main
 
-      - name: Create Release
+      - name: Check Release
+        id: release-check
         run: |
-          echo '${{ steps.list-releases.outputs.releases }}'
+          has_release=$(echo '${{ steps.list-releases.outputs.releases }}' | jq '.[]' | grep -q $RELEASE)
+          if [[ $has_release ]]; then
+            echo "::set-output name=hasrelease::yes"
+          else
+            echo "::set-output name=hasrelease::no"
+          fi
+      - name: Create Release
+        id: create-release
+        if: steps.release-check.outputs.hasrelease == "no"
+        uses: softprops/action-gh-release@v1
+          with:
+            files: |
+              asset.txt
 
       

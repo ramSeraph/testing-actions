@@ -15,17 +15,17 @@ jobs:
       - name: Make a release
         run: |
           touch asset.txt
-          for i in {1...50000}
+          for i in {1..50000}
           do
             echo "blah $i" >> asset.txt
             echo >> asset.txt
           done
-     - name: List Releases
-       id: list-releases
-       uses: github-actions-tools/gh-list-releases@main
+      - name: List Releases
+        id: list-releases
+        uses: github-actions-tools/gh-list-releases@main
 
-     - name: Create Release
-       run: |
-         echo '${{ steps.list-releases.outputs.releases }}'
+      - name: Create Release
+        run: |
+          echo '${{ steps.list-releases.outputs.releases }}'
 
       

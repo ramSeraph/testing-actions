@@ -31,7 +31,10 @@ jobs:
       - name: Check Release
         id: release-check
         run: |
-          has_release=$(echo '${{ steps.list-releases.outputs.releases }}' | jq '.[]' | grep -q $RELEASE)
+          set +e
+          echo '${{ steps.list-releases.outputs.releases }}' | jq '.[]' | grep -q $RELEASE
+          has_release=$?
+          set -e
           if [[ $has_release ]]; then
             echo "::set-output name=hasrelease::yes"
           else

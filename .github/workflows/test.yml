@@ -7,25 +7,25 @@ concurrency:
 on: 
   workflow_dispatch:
 
-env:
-  DOMAIN: "thoughtfree.space"
-  SUB_DOMAIN: "mail"
-  DIGITALOCEAN_TOKEN: "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" 
-  IP_ADDR: "0.0.0.0"
-
 jobs:
   Test-Job:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
-      - name: change dns record
+      - name: Make a release
         run: |
-          touch headers_file
-          echo "Authorization: Bearer $DIGITALOCEAN_TOKEN" >> headers_file
-          rec_id=$(curl -H @headers_file "https://api.digitalocean.com/v2/domains/${DOMAIN}/records" | jq --arg sd "$SUB_DOMAIN" '.domain_records[] | select(.name==$sd) | .id')
-          echo "rec: $rec_id"
-          echo "Content-Type: application/json" >> headers_file
-          curl -X PATCH -H @headers_file --data "{ \"data\": \"${IP_ADDR}\" }" "https://api.digitalocean.com/v2/domains/$DOMAIN/records/$rec_id"
+          touch asset.txt
+          for i in {1...50000}
+          do
+            echo "blah $i" >> asset.txt
+            echo >> asset.txt
+          done
+     - name: List Releases
+       id: list-releases
+       uses: github-actions-tools/gh-list-releases@main
 
+     - name: Create Release
+       run: |
+         echo '${{ steps.list-releases.outputs.releases }}'
 
       

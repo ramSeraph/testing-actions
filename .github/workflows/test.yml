@@ -55,12 +55,18 @@ jobs:
             exit 1
           fi
 
+      - name: Get current date
+        run: echo "::set-output name=date::$(date +'%d%b%Y %H:%M:%S')"
+        id: date
+
+
       - name: Create Release
         id: create-release
         uses: softprops/action-gh-release@v1
         with:
-          body: "New Body"
+          body: "New Body ${{ steps.date.outputs.date }}"
           tag_name: "${{ steps.release-check.outputs.releasename }}"
+          name: "${{ steps.release-check.outputs.releasename }}"
           files: asset.txt
 
       - name: Get Release id

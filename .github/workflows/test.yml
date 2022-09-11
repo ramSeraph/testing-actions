@@ -37,14 +37,52 @@ jobs:
           set -e
           if [[ $has_release ]]; then
             echo "::set-output name=hasrelease::yes"
+            echo "::set-output name=releasename::${RELEASE}-new"
           else
             echo "::set-output name=hasrelease::no"
+            echo "::set-output name=releasename::${RELEASE}"
           fi
+
+      - name: Old Check Release
+        id: old-release-check
+        run: |
+          set +e
+          echo '${{ steps.list-releases.outputs.releases }}' | jq '.[]' | grep -q "${RELEASE}-old"
+          has_old_release=$?
+          set -e
+          if [[ $has_old_release && ${{ steps.release-check.outputs.hasrelease }} == "no" ]]; then
+            echo "ERROR: has an old release but no current release.. exiting"
+            exit 1
+          fi
+
       - name: Create Release
         id: create-release
-        if: ${{ steps.release-check.outputs.hasrelease }} == "no"
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: "${{ env.RELEASE }}"
+          tag_name: "${{ steps.release-check.outputs.releasename }}"
           files: asset.txt
+
+      - name: Get Release id
+        if: steps.release-check.outputs.has_release == "yes"
+        id: get-prev-id
+        run: |
+          release_id=$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/releases/tags/${{ steps.release-check.outputs.releasename }} | jq '.id')
+          echo "::set-output name=releaseid::$release_id"
       
+      - name: Rename old Release
+        if: steps.release-check.outputs.has_release == "yes"
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id: ${{ steps.get-prev-id.outputs.releaseid }}
+          name: "${{ env.RELEASE }}-old"
+          tag_name: "${{ env.RELEASE }}-old"
+
+      - name: Rename new Release
+        if: steps.release-check.outputs.has_release == "yes"
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id: ${{ steps.create-release.outputs.id }}
+          name: "${{ env.RELEASE }}"
+          tag_name: "${{ env.RELEASE }}"

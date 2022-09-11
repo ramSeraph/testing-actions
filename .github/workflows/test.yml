@@ -68,6 +68,7 @@ jobs:
         id: get-prev-id
         run: |
           release_id=$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/releases/tags/${{ steps.release-check.outputs.releasename }} | jq '.id')
+          echo "rid: $release_id"
           echo "::set-output name=releaseid::$release_id"
       
       - name: Rename old Release

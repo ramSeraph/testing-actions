@@ -63,14 +63,14 @@ jobs:
           files: asset.txt
 
       - name: Get Release id
-        if: steps.release-check.outputs.has_release == "yes"
+        if: ${{ steps.release-check.outputs.has_release }} == "yes"
         id: get-prev-id
         run: |
           release_id=$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/releases/tags/${{ steps.release-check.outputs.releasename }} | jq '.id')
           echo "::set-output name=releaseid::$release_id"
       
       - name: Rename old Release
-        if: steps.release-check.outputs.has_release == "yes"
+        if: ${{ steps.release-check.outputs.has_release }} == "yes"
         uses: irongut/EditRelease@v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -79,7 +79,7 @@ jobs:
           tag_name: "${{ env.RELEASE }}-old"
 
       - name: Rename new Release
-        if: steps.release-check.outputs.has_release == "yes"
+        if: ${{ steps.release-check.outputs.has_release }} == "yes"
         uses: irongut/EditRelease@v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

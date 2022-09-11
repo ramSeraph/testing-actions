@@ -59,6 +59,7 @@ jobs:
         id: create-release
         uses: softprops/action-gh-release@v1
         with:
+          body: "New Body"
           tag_name: "${{ steps.release-check.outputs.releasename }}"
           files: asset.txt
 
@@ -76,7 +77,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           id: ${{ steps.get-prev-id.outputs.releaseid }}
           name: "${{ env.RELEASE }}-old"
-          tag_name: "${{ env.RELEASE }}-old"
+          replacename: true
 
       - name: Rename new Release
         if: ${{ steps.release-check.outputs.has_release }} == "yes"
@@ -85,4 +86,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           id: ${{ steps.create-release.outputs.id }}
           name: "${{ env.RELEASE }}"
-          tag_name: "${{ env.RELEASE }}"
+          replacename: true

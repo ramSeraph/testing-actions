@@ -56,27 +56,26 @@ jobs:
           echo "old-releaseid: ${{ steps.release-info.outputs.old-releaseid }}"
           echo "new-releaseid: ${{ steps.release-info.outputs.new-releaseid }}"
           
-          cat err_file.txt
-          #has_old_release=$?
-          #echo "has old release: $has_old_release"
-          #set -e
-          #if [[ $has_old_release && ${{ steps.release-check.outputs.hasrelease }} == "no" ]]; then
-          #  echo "ERROR: has an old release but no current release.. exiting"
-          #  exit 1
-          #fi
-          #export GH_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          #release_id=$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/releases/tags/${RELEASE}-old | jq '.id')
-          #echo "::set-output name=releaseid::$release_id"
+          if [[ "${{ steps.release-info.outputs.base-hasrelease }}" == "no" ]]; then
+            if [[ "${{ steps.release-info.outputs.old-hasrelease }}" == "yes" || "${{ steps.release-info.outputs.new-hasrelease }}" == "yes" ]]; then
+              echo "ERROR: has an old release or new release, but no current release.. exiting"
+              exit 1
+            fi
+          else
+            if [[ "${{ steps.release-info.outputs.new-hasrelease }}" == "yes" ]]; then
+              echo "ERROR: has an new release and a current release.. exiting"
+              exit 1
+            fi
+          fi
 
-
-          #- name: Create Release
-          #  id: create-release
-          #  uses: softprops/action-gh-release@v1
-          #  with:
-          #    body: "New Body ${{ steps.date.outputs.date }}"
-          #    tag_name: "${{ steps.release-check.outputs.releasename }}"
-          #    name: "${{ steps.release-check.outputs.releasename }}"
-          #    files: asset.txt
+      - name: Create Release
+        id: create-release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: "New Body ${{ steps.date.outputs.date }}\n Git Ref: ${{ github.GITHUB_SHA }}"
+          tag_name: "${{ env.RELEASE }}-new"
+          name: "${{ env.RELEASE }}-new"
+          files: asset.txt
 
           #- name: Get Release id
           #  if: ${{ steps.release-check.outputs.has_release }} == "yes"

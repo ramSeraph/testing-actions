@@ -57,8 +57,11 @@ jobs:
           echo "new-releaseid: ${{ steps.release-info.outputs.new-releaseid }}"
           
           if [[ "${{ steps.release-info.outputs.base-hasrelease }}" == "no" ]]; then
-            if [[ "${{ steps.release-info.outputs.old-hasrelease }}" == "yes" || "${{ steps.release-info.outputs.new-hasrelease }}" == "yes" ]]; then
-              echo "ERROR: has an old release or new release, but no current release.. exiting"
+            if [[ "${{ steps.release-info.outputs.old-hasrelease }}" == "yes" ]]; then
+              echo "ERROR: has an old release, but no current release.. exiting"
+              exit 1
+            elif [[ "${{ steps.release-info.outputs.new-hasrelease }}" == "yes" ]]; then
+              echo "ERROR: has an new release, but no current release.. exiting"
               exit 1
             fi
           else

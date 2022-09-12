@@ -55,6 +55,8 @@ jobs:
           echo "base-releaseid: ${{ steps.release-info.outputs.base-releaseid }}"
           echo "old-releaseid: ${{ steps.release-info.outputs.old-releaseid }}"
           echo "new-releaseid: ${{ steps.release-info.outputs.new-releaseid }}"
+          
+          cat err_file.txt
           #has_old_release=$?
           #echo "has old release: $has_old_release"
           #set -e

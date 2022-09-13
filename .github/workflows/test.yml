@@ -80,7 +80,10 @@ jobs:
         id: create-release
         uses: softprops/action-gh-release@v1
         with:
-          body: "New Body ${{ steps.date.outputs.date }}\n Git Ref: ${{ github.sha }}\n Random: ${{ steps.random.outputs.rand }}"
+          body: |
+            New Body ${{ steps.date.outputs.date }}
+            Git Ref ${{ github.sha }}
+            Random ${{ steps.random.outputs.rand }}
           tag_name: "${{ env.RELEASE }}-new"
           name: "${{ env.RELEASE }}-new"
           files: asset.txt

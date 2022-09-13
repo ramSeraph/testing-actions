@@ -100,12 +100,13 @@ jobs:
         if: ${{ steps.release-info.outputs.base-hasrelease == 'yes' }}
         run: |
           source .github/scripts/rfuncs.sh
-          move_release "${{ steps.release_info.outputs.base-releaseid }}" "${{ env.RELEASE }}" "${{ env.RELEASE }}-old"
+          move_release "${{ steps.release_info.outputs.base-releaseid }}" "${RELEASE}" "${RELEASE}-old"
 
       - name: Move New to Base Release
         run: |
           source .github/scripts/rfuncs.sh
-          move_release "${{ steps.release_info.outputs.new-releaseid }}" "${{ env.RELEASE }}-new" "${{ env.RELEASE }}"
+          new_release_id=$(get_release_id ${RELEASE}-new)
+          move_release "$new_release_id" "${RELEASE}-new" "${RELEASE}"
 
       - name: Debug Failures
         if: failure()

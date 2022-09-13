@@ -90,14 +90,14 @@ jobs:
 
       - name: Delete Old Release
         id: delete-old-release
-        if: steps.release-info.outputs.old-hasrelease == "yes"
+        if: ${{ steps.release-info.outputs.old-hasrelease }} == "yes"
         uses: dev-drprasad/delete-tag-and-release@v0.2.0
         with:
           delete_release: true
           tag_name: "${{ env.RELEASE }}-old"
 
       - name: Move Base to Old Release
-        if: steps.release-info.outputs.base-hasrelease == "yes"
+        if: ${{ steps.release-info.outputs.base-hasrelease }} == "yes"
         run: |
           source .github/scripts/rfuncs.sh
           move_release "${{ steps.release_info.outputs.base-releaseid }}" "${{ env.RELEASE }}" "${{ env.RELEASE }}-old"

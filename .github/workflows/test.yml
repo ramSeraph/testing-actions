@@ -20,12 +20,16 @@ jobs:
         run: echo "::set-output name=date::$(date +'%d%b%Y %H:%M:%S')"
         id: date
 
+      - name: Get Random
+        run:  echo "::set-output name=rand::$RANDOM"
+        id: random
+
       - uses: actions/checkout@v3
 
       - name: Create asset
         run: |
           touch asset.txt
-          rand=$RANDOM
+          export rand="${{ steps.random.outputs.rand }}"
           for i in {1..50000}
           do
             echo "blah $rand $i" >> asset.txt
@@ -75,43 +79,27 @@ jobs:
         id: create-release
         uses: softprops/action-gh-release@v1
         with:
-          body: "New Body ${{ steps.date.outputs.date }}\n Git Ref: ${{ github.GITHUB_SHA }}"
+          body: "New Body ${{ steps.date.outputs.date }}\n Git Ref: ${{ github.sha }}\n Random: ${{ steps.random.outputs.rand }}"
           tag_name: "${{ env.RELEASE }}-new"
           name: "${{ env.RELEASE }}-new"
           files: asset.txt
 
-          #- name: Get Release id
-          #  if: ${{ steps.release-check.outputs.has_release }} == "yes"
-          #  id: get-new-id
-          #  run: |
-          #    export GH_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          #    release_id=$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/releases/tags/${{ steps.release-check.outputs.releasename }} | jq '.id')
-          #    echo "rid: $release_id"
-          #    echo "::set-output name=releaseid::$release_id"
+      # TODO: backup to azure archive storage?
+      - name: Delete Old Release
+        id: delete-old-release
+        if: ${{ steps.release-info.outputs.old-hasrelease }} == "yes"
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          delete_release: true
+          tag_name: "${{ env.RELEASE }}-old"
 
-          #- name: Get Old release id
-          #  if: ${{ steps.release-check.outputs.has_release }} == "yes"
-          #  id: get-old-id
-          #  run: |
-          #    export GH_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          #    release_id=$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/releases/tags/${RELEASE} | jq '.id')
-          #    echo "old-rid: $release_id"
-          #    echo "::set-output name=releaseid::$release_id"
-          #
-          #- name: Rename old Release
-          #  if: ${{ steps.release-check.outputs.has_release }} == "yes"
-          #  uses: irongut/EditRelease@v1.2.0
-          #  with:
-          #    token: ${{ secrets.GITHUB_TOKEN }}
-          #    id: ${{ steps.get-prev-id.outputs.releaseid }}
-          #    name: "${{ env.RELEASE }}-old"
-          #    replacename: true
+      - name: Move Base to Old Release
+        if: ${{ steps.release-info.outputs.base-hasrelease }} == "yes"
+        run: |
+          move_release "${{ steps.release_info.outputs.base-releaseid }}" "${{ env.RELEASE }}" "${{ env.RELEASE }}-old"
 
-          #- name: Rename new Release
-          #  if: ${{ steps.release-check.outputs.has_release }} == "yes"
-          #  uses: irongut/EditRelease@v1.2.0
-          #  with:
-          #    token: ${{ secrets.GITHUB_TOKEN }}
-          #    id: ${{ steps.create-release.outputs.id }}
-          #    name: "${{ env.RELEASE }}"
-          #    replacename: true
+      - name: Move New to Base Release
+        run: |
+          move_release "${{ steps.release_info.outputs.new-releaseid }}" "${{ env.RELEASE }}-new" "${{ env.RELEASE }}"
+
+

@@ -28,3 +28,12 @@ function has_release {
     fi
     set -e
 }
+
+function move_release {
+    record_call "$@"
+    export from_id=$1
+    export from=$2
+    export to=$3
+    gh api --method PATCH -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to"
+    gh api --method DELETE -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/git/refs/tags/${from}
+}

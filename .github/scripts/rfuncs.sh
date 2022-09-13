@@ -1,6 +1,6 @@
 gh_headers="Accept: application/vnd.github+json" 
 
-err_file=err_file.txt 
+err_file=${ERR_FILE:-"err_file.txt"} 
 touch $err_file
 
 function record_call {
@@ -34,6 +34,6 @@ function move_release {
     export from_id=$1
     export from=$2
     export to=$3
-    gh api --method PATCH -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to"
-    gh api --method DELETE -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/git/refs/tags/${from}
+    gh api --method PATCH -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to" 2>>$err_file
+    gh api --method DELETE -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/git/refs/tags/${from} 2>>$err_file
 }

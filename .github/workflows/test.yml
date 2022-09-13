@@ -85,7 +85,6 @@ jobs:
           name: "${{ env.RELEASE }}-new"
           files: asset.txt
 
-      # TODO: backup to azure archive storage?
       - name: Delete Old Release
         id: delete-old-release
         if: "${{ steps.release-info.outputs.old-hasrelease }}" == "yes"

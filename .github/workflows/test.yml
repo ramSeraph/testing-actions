@@ -100,7 +100,7 @@ jobs:
         if: ${{ steps.release-info.outputs.base-hasrelease == 'yes' }}
         run: |
           source .github/scripts/rfuncs.sh
-          move_release "${{ steps.release_info.outputs.base-releaseid }}" "${RELEASE}" "${RELEASE}-old"
+          move_release "${{ steps.release-info.outputs.base-releaseid }}" "${RELEASE}" "${RELEASE}-old"
 
       - name: Move New to Base Release
         run: |

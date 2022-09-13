@@ -29,6 +29,8 @@ jobs:
 
       - name: Create asset
         run: |
+          mkdir data
+          cd data
           touch asset.txt
           export rand="${{ steps.random.outputs.rand }}"
           for i in {1..50000}
@@ -86,7 +88,7 @@ jobs:
             Random ${{ steps.random.outputs.rand }}
           tag_name: ${{ env.RELEASE }}-new
           name: "${{ env.RELEASE }}-new"
-          files: asset.txt
+          files: data/asset.txt
 
       - name: Delete Old Release
         id: delete-old-release

@@ -17,6 +17,8 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
+      - run: docker images --format '{{json .}}' | jq .
+
       - name: Get current date
         run: echo "::set-output name=date::$(date +'%d%b%Y %H:%M:%S')"
         id: date

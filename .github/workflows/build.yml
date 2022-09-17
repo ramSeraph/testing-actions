@@ -17,6 +17,7 @@ jobs:
       - name: build-image
         uses: docker/build-push-action@v3
         with:
+          push: true
           context: .
           build-args: |
             build_type=final

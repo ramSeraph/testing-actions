@@ -25,5 +25,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: run-image
         run: |
-          docker run -d --rm --name runner -v $(pwd):/code myimage /code/test.py
+          docker run -d --name runner -v $(pwd):/code myimage /code/test.py
           docker logs -f runner
+          exit_code=$(docker inspect runner --format='{{.State.ExitCode}}')
+          exit $((exit_code))

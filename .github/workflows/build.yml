@@ -19,7 +19,7 @@ jobs:
         with:
           context: .
           build-args: |
-            buil_type=final
+            build_type=final
           tags: myimage:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

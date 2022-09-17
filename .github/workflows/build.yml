@@ -1,4 +1,4 @@
-name: Test Run
+name: Build Run
 concurrency: 
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -18,7 +18,12 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          build-args: |
+            buil_type=final
           tags: myimage:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+      - name: run-image
+        run: |
+          docker run -d --rm --name runner myimage test.py
+          docker logs -f runner

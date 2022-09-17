@@ -6,14 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  Test-Job:
+  Build-Job:
     timeout-minutes: 30
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
-      - run: |
-          find .
       - name: build-image
         uses: docker/build-push-action@v3
         with:
@@ -22,9 +20,10 @@ jobs:
           build-args: |
             build_type=final
           tags: myimage:latest
+          no-cache-filters: base,base-req-build
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: run-image
         run: |
-          docker run -d --rm --name runner myimage test.py
+          docker run -d --rm --name runner -v $(pwd):/code myimage /code/test.py
           docker logs -f runner

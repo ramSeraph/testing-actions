@@ -17,8 +17,8 @@ jobs:
       - run: |
           source .github/scripts/cfuncs.sh
           get_cache_info
-          olds_ids="$(get_old_ids blob 1)"
-          echo "$old_ids"
+          olds_ids="$(get_old_ids blob 1663452570)"
+          echo "old-ids: $old_ids"
           cat $err_file
         env:
           GITHUB_TOKEN: "${{ github.token }}"

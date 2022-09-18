@@ -29,7 +29,7 @@ function get_old_ids {
         exit 1
     fi
     older_than_in_days="$2"
-    if [[ ! $older_than_in_days ~= ^[0-9]+$ ]]; then
+    if [[ ! "$older_than_in_days" =~ ^[0-9]+$ ]]; then
         echo "older_than_in_days param $older_than_in_days is not a positive number" >>$err_file
         exit 1
     fi

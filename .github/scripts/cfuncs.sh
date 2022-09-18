@@ -28,6 +28,8 @@ function get_middle_access {
     num=$(cat out.json| jq --arg c "$cutoff" '.actions_caches[] | .last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 ' | wc -l)
     echo "num - $num" >>$err_file
     half=$(( num / 2 ))
+    echo "half - $half" >>$err_file
+    cat out.json | jq --arg c "$cutoff" '.actions_caches[] | .last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 ' >>$err_file
     middle=$(cat out.json| jq --arg c "$cutoff" '.actions_caches[] | .last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 ' | head -$half | tail -1)
     echo $middle
 }

@@ -49,7 +49,8 @@ function get_old_ids {
     #cutoff=$(( curr_time - 86400 * older_than_in_days ))
     cutoff=$2
 
-    ids="$(get_cache_info | jq --arg c "$cutoff" --arg f "$match" '.actions_caches[] | select(.last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 < ($c | tonumber)) | select(.key | test($f)) | .id' 2>>$err_file)"
+    #ids="$(get_cache_info | jq --arg c "$cutoff" --arg f "$match" '.actions_caches[] | select(.last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 < ($c | tonumber)) | select(.key | test($f)) | .id' 2>>$err_file)"
+    ids="$(get_cache_info | jq --arg c "$cutoff" --arg f "$match" '.actions_caches[] | select(.last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 < ($c | tonumber)) | .id' 2>>$err_file)"
     echo $ids
 }
 

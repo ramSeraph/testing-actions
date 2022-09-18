@@ -19,6 +19,7 @@ jobs:
           get_cache_info
           middle=$(get_middle_access)
           olds_ids="$(get_old_ids blob $middle)"
+          echo 
           echo "old-ids: $old_ids"
           cat $err_file
         env:

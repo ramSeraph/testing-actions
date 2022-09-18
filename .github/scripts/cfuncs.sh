@@ -28,7 +28,8 @@ function get_middle_access {
     num=$(cat out.json| jq --arg c "$cutoff" '.actions_caches[] | .last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 ' | wc -l)
     echo "num - $num" >>$err_file
     half=$(( num / 2 ))
-    echo $half
+    middle=$(cat out.json| jq --arg c "$cutoff" '.actions_caches[] | .last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 ' | head -$half | tail -1)
+    echo $middle
 }
 
 function get_old_ids {

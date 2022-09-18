@@ -21,6 +21,16 @@ function get_cache_info {
     gh api -H "$gh_headers" "/repos/${GITHUB_REPOSITORY}/actions/caches" 2>>$err_file
 }
 
+
+function get_middle_access {
+    record_call
+    gh api -H "$gh_headers" "/repos/${GITHUB_REPOSITORY}/actions/caches" 2>>$err_file > out.json
+    num=$(cat out.json| jq --arg c "$cutoff" '.actions_caches[] | .last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 ' | wc -l)
+    echo "num - $num" >>$err_file
+    half=$(( num / 2 ))
+    echo $half
+}
+
 function get_old_ids {
     record_call "$@"
     match="$1"
@@ -42,5 +52,6 @@ function get_old_ids {
 
 function delete_cache_by_ids {
     record_call "$@"
+    echo
     echo "deleting ids $@"
 }

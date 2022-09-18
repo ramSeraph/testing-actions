@@ -18,7 +18,7 @@ jobs:
           source .github/scripts/cfuncs.sh
           get_cache_info
           middle=$(get_middle_access)
-          olds_ids="$(get_old_ids blob $middle)"
+          olds_ids="$(get_old_ids .* $middle)"
           echo 
           echo "old-ids: $old_ids"
           cat $err_file

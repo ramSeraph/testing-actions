@@ -15,6 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          .github/scripts/cfuncs.sh
+          source .github/scripts/cfuncs.sh
+          get_cache_info
+          olds_ids="$(get_old_ids blob 1)"
+          echo "$old_ids"
+          cat $err_file
         env:
           GITHUB_TOKEN: "${{ github.token }}"

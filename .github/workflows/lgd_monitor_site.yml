@@ -1,0 +1,127 @@
+name: LGD Daily Site Monitor
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on: 
+  schedule:
+    - cron: '15 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  Run-LGD-Monitor:
+    timeout-minutes: 10
+    runs-on: ubuntu-22.04
+    outputs:
+      changes: ${{ steps.monitor-changes.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v2
+      - name: Build Image
+        uses: docker/build-push-action@v3
+        with:
+          context: lgd
+          load: true
+          build-args: |
+            build_type=final
+          tags: lgd:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Get current date
+        run: echo "::set-output name=date::$(date +'%d%b%Y')"
+        id: date
+
+      - name: Monitor site for changes
+        id: monitor-changes
+        run: |
+          docker run -d --name runner -v $(pwd):/code -w /code lgd -m lgd.scrape -m MONITOR -l INFO 
+          docker logs -f runner
+          exit_code=$(docker inspect runner --format='{{.State.ExitCode}}')
+          if [ "$exit_code" -eq "0" ]; then
+            echo "::set-output name=changes::$(cat data/raw/${{ steps.date.outputs.date }}/struct_changes.json }})"
+          fi
+          exit $((exit_code))
+        timeout-minutes: 5
+
+      - name: Cleanup Processes
+        if: ${{ always() }}
+        run: |
+          docker stop runner || true
+          docker kill runner || true
+          docker rm runner || true
+
+  LGD-Issue-Lister:
+    runs-on: ubuntu-22.04
+    outputs:
+      nextid: ${{ steps.issue-status.outputs.nextid }}
+      openissue: ${{ steps:issue-status.outputs.openissue }}
+    steps:
+      - name: Find Existing Open Mismatch Tracker
+        id: LGD-mismatch-issue-tracker
+        uses: lee-dohm/select-matching-issues@v1
+        with:
+          query: 'is:open label:LGD label:"site map tracker"'
+          path: open_issues.txt
+          format: list
+          token: ${{ github.token }}
+      - name: Find Existing Closed Mismatch Tracker
+        id: LGD-mismatch-closed-issue-tracker
+        uses: lee-dohm/select-matching-issues@v1
+        with:
+          query: 'is:closed label:LGD label:"site map tracker" title:"LGD Site Structure Change"'
+          path: closed_issues.txt
+          format: list
+          token: ${{ github.token }}
+      - name: Capture issue status
+        id: issue-status
+        run: |
+          open_issues="$(sed 's/- \[.*\](\(.*\)$/\1/g' open_issues.txt)"
+          num_open_issues="$(wc -l <(echo "$open_issues"))"
+          if [ "$num_open_issues" -gt "1" ]; then
+            echo "expected one open issue.. found $num_open_issues"
+            exit 1
+          elif [ "$num_open_issues" -eq  "0" ]; then
+            echo "::set-output name::openissue::none"
+          else
+            open_issue=$(echo "$open_issues" | head -1)
+            echo "::set-output name::openissue::$open_issue"
+          fi
+          last_closed_id="$(sed 's/- \[LGD Site Structure Change - \([0-9]+\)\].*$/\1/g' closed_issues.txt | sort -u | wc -l)"
+          next_id="$(( last_closed_id + 1 ))"
+          echo "::set-output name=nextid::$next_id"
+
+
+
+  LGD-Issue-Info:
+    needs: [Run-LGD-Monitor, LGD-Issue-Lister]
+    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && needs.LGD-Issue-Lister.openissue == 'none' }}
+    steps:
+      - id: issue-info
+  LGD-Issue-Creater:
+    needs: [Run-LGD-Monitor, LGD-Issue-Info]
+    if: always() && needs.Run-LGD-Monitor.result == 'failure'
+
+  LGD-Monitor-Notify-Run-Failure:
+    needs: [Run-lGD-Monitor, LGD-Issue-Creater]
+    if: ${{ always() && ( needs.Run-LGD-Monitor.result == 'failure' or needs.LGD-Issue-Creater.result == 'failure' ) }}
+    uses: ./.github/workflows/common-pb-alert.yml
+    secrets: inherit
+    with:
+      title: "LGD Site Monitor Run Failed"
+      which-run: "self"
+
+  LGD-Monitor-Notify-Issue:
+    needs: [Run-lGD-Monitor, LGD-Issue-Creater]
+    if: {{ always() && ( needs.Run-LGD-Monitor.result == 'failure' or needs.LGD-Issue-Creater.result == 'success' ) }}
+    uses: ./.github/workflows/common-pb-alert.yml
+    secrets: inherit
+    with:
+      title: "LGD catalog Change"
+      which-run: "ignore"
+      url: "${{ needs.LGD-Issue-Creater.outputs.url }}"
+
+
+
+

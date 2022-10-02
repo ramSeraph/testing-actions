@@ -80,6 +80,20 @@ class Context:
         s.mount('https://', HTTPAdapter(max_retries=retry))
         self._session = s
 
+    @property
+    def session(self):
+        if self._session is None:
+            self.set_session()
+        return self._session
+
+
+    @property
+    def csrf_token(self):
+        if self._csrf_token is None:
+            self.set_csrf_token()
+        return self._csrf_token
+
+
 
 def setup_logging(log_level):
     from colorlog import ColoredFormatter

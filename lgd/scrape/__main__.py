@@ -30,9 +30,9 @@ if __name__ == '__main__':
     if len(changes['added']) == 0 and len(changes['removed']) == 0: 
         logger.info('No changes')
         exit(0)
-    path = Path(ctx.params.base_raw_dir).joinpath(get_date_str(), 'struct_changes.json')
+    path = Path(params.base_raw_dir).joinpath(get_date_str(), 'struct_changes.json')
     with open(path, 'w') as f:
-        json.dump(changes, f)
+        json.dump(changes, f, indent=2)
     exit(1)
 
 

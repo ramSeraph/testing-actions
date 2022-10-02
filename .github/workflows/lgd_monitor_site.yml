@@ -105,7 +105,7 @@ jobs:
         uses: nashmaniac/create-issue-action@v1.1
         name: Create Issue Action
         with:
-          title: ${{ env.ISSUE_TITLE - needs.LGD-Issue-Lister.outputs.nextid }}
+          title: ${{ env.ISSUE_TITLE }} - ${{ needs.LGD-Issue-Lister.outputs.nextid }}
           token: ${{secrets.GITHUB_TOKEN}}
           assignees: ${{github.repository_owner}}
           labels: LGD,site map tracker

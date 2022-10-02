@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       nextid: ${{ steps.issue-status.outputs.nextid }}
-      openissue: ${{ steps:issue-status.outputs.openissue }}
+      openissue: ${{ steps.issue-status.outputs.openissue }}
     steps:
       - name: Find Existing Open Mismatch Tracker
         id: LGD-mismatch-issue-tracker
@@ -152,7 +152,7 @@ jobs:
       which-run: "self"
 
   LGD-Monitor-Notify-Issue:
-    needs: [Run-lGD-Monitor, LGD-Issue-Creater]
+    needs: [Run-lGD-Monitor, LGD-Issue-Creater, LGD-Issue-Updater]
     if: {{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Updater.ouputs.updated == 'yes' or needs.LGD-Issue-Creater.result == 'success' ) }}
     uses: ./.github/workflows/common-pb-alert.yml
     secrets: inherit

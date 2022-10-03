@@ -95,9 +95,10 @@ jobs:
             title="$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/issues/$last_issue_number | jq '.title')"
             next_id=$(echo "$title" | sed "s/$ISSUE_TITLE - \([0-9]+\)/\1/g")
             next_id=$(( next_id + 1 ))
-          else:
+          else
             next_id=0
           fi
+          echo "next id is $next_id"
           echo "::set-output name=nextid::$next_id"
 
 

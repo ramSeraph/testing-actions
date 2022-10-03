@@ -162,7 +162,7 @@ jobs:
       - Run-LGD-Monitor
       - LGD-Issue-Creator
       - LGD-Issue-Updater
-    if: {{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Updater.outputs.updated == 'yes' || needs.LGD-Issue-Creator.result == 'success' ) }}
+    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Updater.outputs.updated == 'yes' || needs.LGD-Issue-Creator.result == 'success' ) }}
     uses: ./.github/workflows/common-pb-alert.yml
     secrets: inherit
     with:

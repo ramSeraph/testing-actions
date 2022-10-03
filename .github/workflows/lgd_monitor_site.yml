@@ -169,7 +169,3 @@ jobs:
       title: "LGD Catalog Change"
       which-run: "ignore"
       url: "${{ needs.LGD-Issue-Creater.outputs.url }}"
-
-
-
-

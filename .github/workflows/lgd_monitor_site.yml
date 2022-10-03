@@ -37,6 +37,12 @@ jobs:
         run: echo "::set-output name=date::$(date +'%d%b%Y')"
         id: date
 
+      - name: Cache changes
+        uses: actions/cache@v2
+        with:
+          path: data/raw
+          key: LGD-Monitor-Changes-${{ steps.date.outputs.date }}
+
       - name: Monitor site for changes
         id: monitor-changes
         run: |
@@ -45,6 +51,7 @@ jobs:
           exit_code=$(docker inspect runner --format='{{.State.ExitCode}}')
           filename="data/raw/${{ steps.date.outputs.date }}/struct_changes.json" 
           if [[ -f $filename ]]; then
+            cat $filename
             echo "::set-output name=changes::$filename"
           else
             echo "::set-output name=changes::none"
@@ -103,6 +110,15 @@ jobs:
       issue-number: ${{ steps.create-issue.outputs.issue-number }}
     if: needs.Run-LGD-Monitor.outputs.changes != 'none'
     steps:
+      - name: Get current date
+        run: echo "::set-output name=date::$(date +'%d%b%Y')"
+        id: date
+      - name: Cache changes
+        uses: actions/cache@v2
+        with:
+          path: data/raw
+          key: LGD-Monitor-Changes-${{ steps.date.outputs.date }}
+
       - id: issue-body-creator
         run: |
           echo "\`\`\`yaml" > $ISSUE_BODY_FILE

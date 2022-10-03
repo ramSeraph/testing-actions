@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     path = Path(params.base_raw_dir).joinpath(get_date_str(), 'struct_changes.json')
     if path.exists():
-        logger.warning(f'deleting previously existing {file}')
+        logger.warning(f'deleting previously existing {path}')
         path.unlink()
     known_site_map = get_known_site_map()
     changes = get_changes_in_site_map(known_site_map, site_map)

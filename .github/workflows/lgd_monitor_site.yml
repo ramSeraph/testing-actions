@@ -86,10 +86,10 @@ jobs:
             echo "expected one or no open issues.. found $num_open_issues"
             exit 1
           elif [ "$num_open_issues" -eq  "0" ]; then
-            echo "::set-output name::openissue::none"
+            echo "::set-output name=openissue::none"
           else
             open_issue=$(echo "$open_issues" | head -1)
-            echo "::set-output name::openissue::$open_issue"
+            echo "::set-output name=openissue::$open_issue"
           fi
           last_closed_id="$(sed "s/- \[$ISSUE_TITLE - \([0-9]+\)\].*$/\1/g" closed_issues.txt | sort -u | wc -l)"
           next_id="$(( last_closed_id + 1 ))"
@@ -138,9 +138,9 @@ jobs:
             echo "{ \"body\": \"$new_body\"}" > data_file.json
             curl -X PATCH -H "$gh_header" -H "Authorization: Bearer ${{ github.token }}" -d @data_file.json 
             if [[ "$?" == "0" ]]; then
-              echo "::set-output name::updated::yes"
+              echo "::set-output name=updated::yes"
             else
-              echo "::set-output name::updated::no"
+              echo "::set-output name=updated::no"
             fi
           fi
 

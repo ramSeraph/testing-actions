@@ -25,14 +25,18 @@ if __name__ == '__main__':
     else:
         with open(site_map_file, 'r') as f:
             site_map = json.load(f)
+
+    path = Path(params.base_raw_dir).joinpath(get_date_str(), 'struct_changes.json')
+    if path.exists():
+        logger.warning(f'deleting previously existing {file}')
+        path.unlink()
     known_site_map = get_known_site_map()
     changes = get_changes_in_site_map(known_site_map, site_map)
     if len(changes['added']) == 0 and len(changes['removed']) == 0: 
         logger.info('No changes')
         exit(0)
-    path = Path(params.base_raw_dir).joinpath(get_date_str(), 'struct_changes.json')
     with open(path, 'w') as f:
         json.dump(changes, f, indent=2)
-    exit(1)
+    exit(0)
 
 

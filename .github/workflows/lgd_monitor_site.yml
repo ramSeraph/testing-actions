@@ -11,6 +11,7 @@ on:
 
 env:
   ISSUE_TITLE: "LGD Site Structure Change"
+  ISSUE_BODY_FILE: "issue_body.md"
 
 jobs:
   Run-LGD-Monitor:
@@ -42,8 +43,11 @@ jobs:
           docker run -d --name runner -v $(pwd):/code -w /code lgd -m lgd.scrape -m MONITOR -l INFO 
           docker logs -f runner
           exit_code=$(docker inspect runner --format='{{.State.ExitCode}}')
-          if [ "$exit_code" -eq "0" ]; then
-            echo "::set-output name=changes::$(cat data/raw/${{ steps.date.outputs.date }}/struct_changes.json }})"
+          filename="data/raw/${{ steps.date.outputs.date }}/struct_changes.json" 
+          if [[ -f $filename ]]; then
+            echo "::set-output name=changes::$filename"
+          else
+            echo "::set-output name=changes::none"
           fi
           exit $((exit_code))
         timeout-minutes: 5
@@ -57,42 +61,35 @@ jobs:
 
   LGD-Issue-Lister:
     runs-on: ubuntu-22.04
+    needs:
+      - Run-LGD-Monitor
+    if: needs.Run-LGD-Monitor.outputs.changes != 'none'
     outputs:
-      nextid: ${{ steps.issue-status.outputs.nextid }}
-      openissue: ${{ steps.issue-status.outputs.openissue }}
+      next-id: ${{ steps.get-next-id.outputs.nextid }}
+      issue-number: ${{ steps.last-issue.outputs.issue-number }}
+      has-found: ${{ steps.last-issue.outputs.has-found }}
+      is-closed: ${{ steps.last-issue.outputs.is-closed }}
     steps:
-      - name: Find Existing Open Mismatch Tracker
-        id: LGD-mismatch-issue-tracker
-        uses: lee-dohm/select-matching-issues@v1
+      - name: Find the last open report issue
+        id: last-issue
+        uses: micalevisk/last-issue-action@v2
         with:
-          query: 'is:open label:LGD label:"site map tracker"'
-          path: open_issues.txt
-          format: list
-          token: ${{ github.token }}
-      - name: Find Existing Closed Mismatch Tracker
-        id: LGD-mismatch-closed-issue-tracker
-        uses: lee-dohm/select-matching-issues@v1
-        with:
-          query: 'is:closed label:LGD label:"site map tracker" title:"${{ env.ISSUE_TITLE }}"'
-          path: closed_issues.txt
-          format: list
-          token: ${{ github.token }}
-      - name: Capture issue status
-        id: issue-status
+          state: all
+          labels: |
+            LGD
+            site map tracker
+
+      - name: Get Id of last issue
+        id: get-next-id
         run: |
-          open_issues="$(sed 's/- \[.*\](\(.*\)$/\1/g' open_issues.txt)"
-          num_open_issues="$(wc -l <(echo "$open_issues"))"
-          if [ "$num_open_issues" -gt "1" ]; then
-            echo "expected one or no open issues.. found $num_open_issues"
-            exit 1
-          elif [ "$num_open_issues" -eq  "0" ]; then
-            echo "::set-output name=openissue::none"
-          else
-            open_issue=$(echo "$open_issues" | head -1)
-            echo "::set-output name=openissue::$open_issue"
+          last_issue_number="${{ steps.last-issue.issue-number }}"
+          if [[ "$last_issue_number" != "" ]]; then
+            title="$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/issues/$last_issue_number" | jq '.title')"
+            next_id="$(echo "$title" | sed "s/$ISSUE_TITLE - \([0-9]+\)/\1/g")
+            next_id="$(( next_id + 1 ))"
+          else:
+            next_id="0"
           fi
-          last_closed_id="$(sed "s/- \[$ISSUE_TITLE - \([0-9]+\)\].*$/\1/g" closed_issues.txt | sort -u | wc -l)"
-          next_id="$(( last_closed_id + 1 ))"
           echo "::set-output name=nextid::$next_id"
 
 
@@ -101,71 +98,79 @@ jobs:
     needs:
       - Run-LGD-Monitor
       - LGD-Issue-Lister
-    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && needs.LGD-Issue-Lister.openissue == 'none' }}
-    steps:
-      - id: create-issue
-        uses: nashmaniac/create-issue-action@v1.1
-        name: Create Issue Action
-        with:
-          title: ${{ env.ISSUE_TITLE }} - ${{ needs.LGD-Issue-Lister.outputs.nextid }}
-          token: ${{secrets.GITHUB_TOKEN}}
-          assignees: ${{github.repository_owner}}
-          labels: LGD,site map tracker
-          body: |
-            ```yaml
-            ${{ needs.RUN-LGD-Monitor.outputs.changes }}
-            ```
-
-  LGD-Issue-Updater:
-    runs-on: ubuntu-22.04
-    needs:
-      - Run-LGD-Monitor
-      - LGD-Issue-Lister
-    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && needs.LGD-Issue-Lister.openissue != 'none' }}
     outputs:
-      updated: ${{ steps.outputs.updated }}
+      create: ${{ steps.issue-body-creator.outputs.create }}
+      issue-number: ${{ steps.create-issue.outputs.issue-number }}
+    if: needs.Run-LGD-Monitor.outputs.changes != 'none'
     steps:
-      - id: get-issue-body
+      - id: issue-body-creator
         run: |
-          issue_id="$( ${{ needs.LGD-Issue-Lister.outputs.openissue }} | rev | cut -d'/' -f 1 | rev )"
-          issue_url="https://api.github.com/repos/${{ github.repository }}/issues/$issue_id"
-          gh_header="Accept: application/vnd.github+json" 
-          issue_body="$(gh api -H "$gh_header" $issue_url | jq -r '.body')"
-          new_body="```yaml
-          ${{ needs.RUN-LGD-Monitor-outputs.changes }}
-          ```"
-          if [[ "$new_body" != "$issue_body" ]]; then
-            echo "{ \"body\": \"$new_body\"}" > data_file.json
-            curl -X PATCH -H "$gh_header" -H "Authorization: Bearer ${{ github.token }}" -d @data_file.json 
-            if [[ "$?" == "0" ]]; then
-              echo "::set-output name=updated::yes"
-            else
-              echo "::set-output name=updated::no"
-            fi
+          echo "```yaml" > $ISSUE_BODY_FILE
+          cat ${{ needs.Run-LGD-Monitor.outputs.changes }} >> $ISSUE_BODY_FILE
+          echo "```" >> $ISSUE_BODY_FILE
+
+          issue_id="${{ needs.LGD-Issue-Lister.outputs.issue-number }}"
+          
+          if [[ "${{ needs.LGD-Issue-Lister.has-found }}" == "false" || "${{ needs.LGD-Issue-Lister.is-closed }}" == "true" ]]; then
+            echo "::set-output name=issue-number::"
+            echo "::set-output name=create::true"
+          else
+            issue_url="https://api.github.com/repos/${{ github.repository }}/issues/$issue_id"
+            gh_header="Accept: application/vnd.github+json" 
+            gh api -H "\"$gh_header\"" $issue_url | jq -r '.body' > existing_${ISSUE_BODY_FILE}
+            echo "::set-output name=issue-number::$issue_id"
+            echo "::set-output name=create::false"
+            diff $ISSUE_BODY_FILE existing_$ISSUE_BODY_FILE || echo "::set-output name=create::true"
           fi
 
+      - id: create-issue
+        if: steps.issue-body-creator.create == 'true'
+        uses: peter-evans/create-issue-from-file@v4
+        name: Create Issue Action
+        with:
+          title: ${{ env.ISSUE_TITLE }} - ${{ needs.LGD-Issue-Lister.outputs.next-id }}
+          token: ${{secrets.GITHUB_TOKEN}}
+          issue-number: ${{ steps.issue-body-creator.issue-number }}
+          content-filepath: ${{ env.ISSUE_BODY_FILE }}
+          assignees: ${{github.repository_owner}}
+          labels: |
+            LGD
+            site map tracker
+
+  LGD-Monitor-Notify-Issue:
+    needs: 
+      - Run-LGD-Monitor
+      - LGD-Issue-Lister
+      - LGD-Issue-Creator
+    if: |
+       needs.Run-LGD-Monitor.outputs.changes != 'none' &&
+       needs.LGD-Issue-Creator.outputs.create == 'yes'
+    uses: ./.github/workflows/common-pb-alert.yml
+    secrets: inherit
+    with:
+      title: "LGD Catalog Change"
+      which-run: "ignore"
+      url: "https://github.com/${{ github.repository }}/issues/${{ needs.LGD-Issue-Creator.outputs.issue-number }}"
 
   LGD-Monitor-Notify-Run-Failure:
     needs: 
       - Run-LGD-Monitor
+      - LGD-Issue-Lister
       - LGD-Issue-Creator
       - LGD-Issue-Updater
-    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Creator.result == 'failure' || needs.LGD-Issue-Upadater.result == 'failure' ) }}
+      - LGD-Monitor-Notify-Issue
+    if: |
+      always() && 
+      (
+        needs.Run-LGD-Monitor.result == 'failure' ||
+        needs.LGD-Issue-Creator.result == 'failure' ||
+        needs.LGD-Issue-Creator.result == 'failure' ||
+        needs.LGD-Issue-Updater.result == 'failure' ||
+        needs.LGD-Monitor-Notify-Issue.result == 'failure'
+      )
     uses: ./.github/workflows/common-pb-alert.yml
     secrets: inherit
     with:
       title: "LGD Site Monitor Run Failed"
       which-run: "self"
 
-  LGD-Monitor-Notify-Issue:
-    needs: 
-      - Run-LGD-Monitor
-      - LGD-Issue-Creator
-      - LGD-Issue-Updater
-    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Updater.outputs.updated == 'yes' || needs.LGD-Issue-Creator.result == 'success' ) }}
-    uses: ./.github/workflows/common-pb-alert.yml
-    secrets: inherit
-    with:
-      title: "LGD Catalog Change"
-      which-run: "ignore"
-      url: "${{ needs.LGD-Issue-Creater.outputs.url }}"

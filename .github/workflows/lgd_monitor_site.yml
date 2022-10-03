@@ -144,7 +144,7 @@ jobs:
   LGD-Monitor-Notify-Run-Failure:
     runs-on: ubuntu-22.04
     needs: [Run-lGD-Monitor, LGD-Issue-Creater, LGD-Issue-Updater]
-    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Creator.result == 'failure' || needs.LGD-Issue-Upadater.result == "failure" ) }}
+    if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Creator.result == 'failure' || needs.LGD-Issue-Upadater.result == 'failure' ) }}
     uses: ./.github/workflows/common-pb-alert.yml
     secrets: inherit
     with:

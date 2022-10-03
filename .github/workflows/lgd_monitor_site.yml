@@ -7,7 +7,13 @@ concurrency:
 on: 
   schedule:
     - cron: '15 3 * * *'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'lgd/scrape/site_map.json'
   workflow_dispatch:
+
 
 env:
   ISSUE_TITLE: "LGD Site Structure Change"
@@ -71,7 +77,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
       - Run-LGD-Monitor
-    if: needs.Run-LGD-Monitor.outputs.changes != 'none'
     outputs:
       next-id: ${{ steps.get-next-id.outputs.nextid }}
       issue-number: ${{ steps.last-issue.outputs.issue-number }}
@@ -100,6 +105,36 @@ jobs:
           fi
           echo "next id is $next_id"
           echo "::set-output name=nextid::$next_id"
+
+
+  LGD-Issue-Closer:
+    runs-on: ubuntu-22.04
+    needs:
+      - Run-LGD-Monitor
+      - LGD-Issue-Lister
+    if: needs.Run-LGD-Monitor.outputs.changes == 'none'
+    steps:
+      - name: Issue Closure Checks
+        id: closure-checks
+        run: |
+          echo "::set-output name=close::false"
+          if [[ "${{ needs.LGD-Issue-Lister.outputs.has-found }}" == "true" || "${{ needs.LGD-Issue-Lister.outputs.is-closed }}" == "false" ]]; then
+            echo "need to close current issue"
+            echo "::set-output name=close::true"
+            if [[ "${{ github.event_name }}" == "push" ]]; then
+              compare="${{ github.event.push.compare }}"
+              echo "::set-output name=reason::[User made Changes]($compare) or website changed"
+            else
+              echo "::set-output name=reason::Changes in website"
+            fi
+          fi
+      - name: Close Issue
+        if: steps.closure-checks.outputs.close == 'true'
+        uses: peter-evans/close-issue@v2
+        with:
+          issue-number: ${{ needs.LGD-Issue-Lister.issue-number }}
+          comment: Auto-closing issue - ${{ steps.closure-checks.outputs.reason }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
 
   LGD-Issue-Creator:
@@ -182,6 +217,7 @@ jobs:
     needs: 
       - Run-LGD-Monitor
       - LGD-Issue-Lister
+      - LGD-Issue-Closer
       - LGD-Issue-Creator
       - LGD-Monitor-Notify-Issue
     if: |

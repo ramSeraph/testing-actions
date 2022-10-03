@@ -146,7 +146,7 @@ jobs:
             echo "existing issue $issue_id found"
             echo "::set-output name=issue-number::$issue_id"
             echo "::set-output name=create::false"
-            diff $ISSUE_BODY_FILE existing_$ISSUE_BODY_FILE || echo "issue needs to be updated" && echo "::set-output name=create::true"
+            diff $ISSUE_BODY_FILE existing_$ISSUE_BODY_FILE || ( echo "issue needs to be updated" && echo "::set-output name=create::true" )
           fi
 
       - id: create-issue

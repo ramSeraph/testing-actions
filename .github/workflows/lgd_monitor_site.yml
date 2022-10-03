@@ -141,6 +141,7 @@ jobs:
           else
             issue_url="https://api.github.com/repos/${{ github.repository }}/issues/$issue_id"
             gh api -H "Accept: application/vnd.github+json" $issue_url | jq -r '.body' > existing_${ISSUE_BODY_FILE}
+            sed -i '${/^$/d;}' existing_${ISSUE_BODY_FILE}
             cat existing_${ISSUE_BODY_FILE}
             echo "existing issue $issue_id found"
             echo "::set-output name=issue-number::$issue_id"

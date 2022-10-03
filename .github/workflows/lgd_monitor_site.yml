@@ -140,8 +140,7 @@ jobs:
             echo "::set-output name=create::true"
           else
             issue_url="https://api.github.com/repos/${{ github.repository }}/issues/$issue_id"
-            gh_header="Accept: application/vnd.github+json" 
-            gh api -H "\"$gh_header\"" $issue_url | jq -r '.body' > existing_${ISSUE_BODY_FILE}
+            gh api -H "Accept: application/vnd.github+json" $issue_url | jq -r '.body' > existing_${ISSUE_BODY_FILE}
             cat existing_${ISSUE_BODY_FILE}
             echo "existing issue $issue_id found"
             echo "::set-output name=issue-number::$issue_id"

@@ -121,6 +121,8 @@ jobs:
           key: LGD-Monitor-Changes-${{ steps.date.outputs.date }}
 
       - id: issue-body-creator
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "\`\`\`yaml" > $ISSUE_BODY_FILE
           cat ${{ needs.Run-LGD-Monitor.outputs.changes }} >> $ISSUE_BODY_FILE
@@ -131,15 +133,18 @@ jobs:
           issue_id="${{ needs.LGD-Issue-Lister.outputs.issue-number }}"
           
           if [[ "${{ needs.LGD-Issue-Lister.has-found }}" == "false" || "${{ needs.LGD-Issue-Lister.is-closed }}" == "true" ]]; then
+            echo "need to create new issue"
             echo "::set-output name=issue-number::"
             echo "::set-output name=create::true"
           else
             issue_url="https://api.github.com/repos/${{ github.repository }}/issues/$issue_id"
             gh_header="Accept: application/vnd.github+json" 
             gh api -H "\"$gh_header\"" $issue_url | jq -r '.body' > existing_${ISSUE_BODY_FILE}
+            cat existing_${ISSUE_BODY_FILE}
+            echo "existing issue $issue_id found"
             echo "::set-output name=issue-number::$issue_id"
             echo "::set-output name=create::false"
-            diff $ISSUE_BODY_FILE existing_$ISSUE_BODY_FILE || echo "::set-output name=create::true"
+            diff $ISSUE_BODY_FILE existing_$ISSUE_BODY_FILE || { echo "issue needs to be updated"; echo "::set-output name=create::true" }
           fi
 
       - id: create-issue

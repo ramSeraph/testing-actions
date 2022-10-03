@@ -98,7 +98,9 @@ jobs:
 
   LGD-Issue-Creator:
     runs-on: ubuntu-22.04
-    needs: [Run-LGD-Monitor, LGD-Issue-Lister]
+    needs:
+      - Run-LGD-Monitor
+      - LGD-Issue-Lister
     if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && needs.LGD-Issue-Lister.openissue == 'none' }}
     steps:
       - id: create-issue
@@ -116,7 +118,9 @@ jobs:
 
   LGD-Issue-Updater:
     runs-on: ubuntu-22.04
-    needs: [Run-LGD-Monitor, LGD-Issue-Lister]
+    needs:
+      - Run-LGD-Monitor
+      - LGD-Issue-Lister
     if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && needs.LGD-Issue-Lister.openissue != 'none' }}
     outputs:
       updated: ${{ steps.outputs.updated }}
@@ -142,7 +146,10 @@ jobs:
 
 
   LGD-Monitor-Notify-Run-Failure:
-    needs: [Run-lGD-Monitor, LGD-Issue-Creater, LGD-Issue-Updater]
+    needs: 
+      - Run-LGD-Monitor
+      - LGD-Issue-Creator
+      - LGD-Issue-Updater
     if: ${{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Creator.result == 'failure' || needs.LGD-Issue-Upadater.result == 'failure' ) }}
     uses: ./.github/workflows/common-pb-alert.yml
     secrets: inherit
@@ -151,8 +158,11 @@ jobs:
       which-run: "self"
 
   LGD-Monitor-Notify-Issue:
-    needs: [Run-lGD-Monitor, LGD-Issue-Creater, LGD-Issue-Updater]
-    if: {{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Updater.outputs.updated == 'yes' or needs.LGD-Issue-Creater.result == 'success' ) }}
+    needs: 
+      - Run-LGD-Monitor
+      - LGD-Issue-Creator
+      - LGD-Issue-Updater
+    if: {{ always() && needs.Run-LGD-Monitor.result == 'failure' && ( needs.LGD-Issue-Updater.outputs.updated == 'yes' || needs.LGD-Issue-Creator.result == 'success' ) }}
     uses: ./.github/workflows/common-pb-alert.yml
     secrets: inherit
     with:

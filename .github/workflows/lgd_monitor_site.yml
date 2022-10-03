@@ -127,6 +127,7 @@ jobs:
         run: |
           echo "\`\`\`yaml" > $ISSUE_BODY_FILE
           cat ${{ needs.Run-LGD-Monitor.outputs.changes }} >> $ISSUE_BODY_FILE
+          echo >> $ISSUE_BODY_FILE
           echo "\`\`\`" >> $ISSUE_BODY_FILE
 
           cat $ISSUE_BODY_FILE

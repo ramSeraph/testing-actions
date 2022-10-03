@@ -108,7 +108,7 @@ jobs:
       - LGD-Issue-Lister
     outputs:
       create: ${{ steps.issue-body-creator.outputs.create }}
-      issue-number: ${{ steps.create-issue.outputs.issue-number }}
+      issue-number: ${{ steps.issue-body-creator.outputs.issue-number }}
     if: needs.Run-LGD-Monitor.outputs.changes != 'none'
     steps:
       - name: Get current date

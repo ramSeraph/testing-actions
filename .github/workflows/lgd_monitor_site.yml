@@ -157,15 +157,13 @@ jobs:
       - Run-LGD-Monitor
       - LGD-Issue-Lister
       - LGD-Issue-Creator
-      - LGD-Issue-Updater
       - LGD-Monitor-Notify-Issue
     if: |
       always() && 
       (
         needs.Run-LGD-Monitor.result == 'failure' ||
+        needs.LGD-Issue-Lister.result == 'failure' ||
         needs.LGD-Issue-Creator.result == 'failure' ||
-        needs.LGD-Issue-Creator.result == 'failure' ||
-        needs.LGD-Issue-Updater.result == 'failure' ||
         needs.LGD-Monitor-Notify-Issue.result == 'failure'
       )
     uses: ./.github/workflows/common-pb-alert.yml

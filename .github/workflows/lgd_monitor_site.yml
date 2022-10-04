@@ -122,6 +122,7 @@ jobs:
             echo "need to close current issue"
             echo "::set-output name=close::true"
             if [[ "${{ github.event_name }}" == "push" ]]; then
+              echo "${{ toJSON(github.event) }}"
               compare="${{ github.event.push.compare }}"
               echo "::set-output name=reason::[User made Changes]($compare) or website changed"
             else
@@ -132,7 +133,7 @@ jobs:
         if: steps.closure-checks.outputs.close == 'true'
         uses: peter-evans/close-issue@v2
         with:
-          issue-number: ${{ needs.LGD-Issue-Lister.issue-number }}
+          issue-number: ${{ needs.LGD-Issue-Lister.outputs.issue-number }}
           comment: Auto-closing issue - ${{ steps.closure-checks.outputs.reason }}
           token: ${{ secrets.GITHUB_TOKEN }}
 

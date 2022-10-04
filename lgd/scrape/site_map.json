@@ -590,5 +590,10 @@
     "dropdown": [ "Exceptional Reports", "Villages which are mapped to block but not mapped to Rural local bodies and vice versa" ],
     "comp": "IGNORE",
     "ignore_reason": "covered elsewhere"
+  },
+  { 
+    "dropdown": [ "Exceptional Reports", "List of All urban local bodies with no Wards." ],
+    "comp": "IGNORE",
+    "ignore_reason": "covered elsewhere, Needs Review"
   }
 ]

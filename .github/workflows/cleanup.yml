@@ -19,11 +19,11 @@ jobs:
           get_cache_info
           echo "got main cache"
           middle=$(get_middle_access)
-          olds_ids="$(get_old_ids ".*" "$middle")"
+          olds_ids="$(get_old_ids ".*" "$middle" | | tr '\n' ' ')"
           echo 
           echo "old-ids: $old_ids"
           cat $err_file
-          delete_cache_by_ids $old_ids
+          delete_cache_by_ids "$old_ids"
           
         env:
           GITHUB_TOKEN: "${{ github.token }}"

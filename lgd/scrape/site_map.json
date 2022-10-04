@@ -582,11 +582,6 @@
     "ignore_reason": "covered elsewhere, Needs Review"
   },
   { 
-    "dropdown": [ "Exceptional Reports", "List of land region entity FULLY mapped under more than one local bodies" ],
-    "comp": "IGNORE",
-    "ignore_reason": "covered elsewhere, No Data"
-  },
-  { 
     "dropdown": [ "Exceptional Reports", "Villages which are mapped to block but not mapped to Rural local bodies and vice versa" ],
     "comp": "IGNORE",
     "ignore_reason": "covered elsewhere"

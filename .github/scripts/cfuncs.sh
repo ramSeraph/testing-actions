@@ -43,14 +43,11 @@ function get_old_ids {
     fi
     older_than_in_days="$2"
     if [[ ! "$older_than_in_days" =~ ^[0-9\.]+$ ]]; then
-        echo "older_than_in_days param $older_than_in_days is not a positive number" >>$err_file
+        echo "older_than_in_days param $older_than_in_days is not a positive number" >> $err_file
         exit 1
     fi
-    echo "curr_time: $curr_time" >>$errfile
-    echo "older than: $older_than_in_days" >>$errfile
     cutoff=$(echo $curr_time - 86400*$older_than_in_days | bc -l)
     cutoff=$( echo ${cutoff}/1 | bc )
-    echo "cuttoff: $cutoff" >>$errfile 
 
     ids="$(get_cache_info | jq --arg c "$cutoff" --arg f "$match" '.actions_caches[] | select(.last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 < ($c | tonumber)) | select(.key | test($f)) | .id' 2>>$err_file)"
     echo $ids
@@ -61,6 +58,7 @@ function delete_cache_by_ids {
     echo
     echo "deleting ids $@"
     for cache_id; do
+        echo "Clearing cache $cache_id"
         gh api --method DELETE -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/actions/caches/${cache_id}
     done
 }

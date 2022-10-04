@@ -19,6 +19,7 @@ jobs:
           get_cache_info
           echo "got main cache"
           middle=$(get_middle_access)
+          echo $middle
           olds_ids="$(get_old_ids ".*" "$middle" | tr '\n' ' ')"
           echo 
           echo "old-ids: $old_ids"

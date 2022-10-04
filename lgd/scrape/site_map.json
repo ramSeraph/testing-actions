@@ -577,6 +577,11 @@
     "ignore_reason": "covered elsewhere, Needs Review"
   },
   { 
+    "dropdown": [ "Blah", "Super blah" ],
+    "comp": "TESTING",
+    "ignore_reason": "Super ignore"
+  },
+  { 
     "dropdown": [ "Exceptional Reports", "List of land region entity FULLY mapped under more than one local bodies" ],
     "comp": "IGNORE",
     "ignore_reason": "covered elsewhere, No Data"

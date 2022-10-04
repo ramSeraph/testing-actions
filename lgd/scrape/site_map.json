@@ -572,14 +572,14 @@
     "ignore_reason": "covered elsewhere, Needs Review"
   },
   { 
-    "dropdown": [ "Exceptional Reports", "Inhabitant villages not mapped to any local body" ],
+    "dropdown": [ "Exceptional Reports", "Blocks mapped to villages of multiple districts" ],
     "comp": "IGNORE",
     "ignore_reason": "covered elsewhere, Needs Review"
   },
   { 
-    "dropdown": [ "Blah", "Super blah" ],
-    "comp": "TESTING",
-    "ignore_reason": "Super ignore"
+    "dropdown": [ "Exceptional Reports", "Inhabitant villages not mapped to any local body" ],
+    "comp": "IGNORE",
+    "ignore_reason": "covered elsewhere, Needs Review"
   },
   { 
     "dropdown": [ "Exceptional Reports", "List of land region entity FULLY mapped under more than one local bodies" ],

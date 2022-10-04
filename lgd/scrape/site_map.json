@@ -572,11 +572,6 @@
     "ignore_reason": "covered elsewhere, Needs Review"
   },
   { 
-    "dropdown": [ "Exceptional Reports", "Blocks mapped to villages of multiple districts" ],
-    "comp": "IGNORE",
-    "ignore_reason": "covered elsewhere, Needs Review"
-  },
-  { 
     "dropdown": [ "Exceptional Reports", "Inhabitant villages not mapped to any local body" ],
     "comp": "IGNORE",
     "ignore_reason": "covered elsewhere, Needs Review"

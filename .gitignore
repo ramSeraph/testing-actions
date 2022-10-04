@@ -4,3 +4,4 @@ lgd_owner.json
 data/
 env.sh
 err_file.txt
+.venv/

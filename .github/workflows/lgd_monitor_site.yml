@@ -47,7 +47,7 @@ jobs:
         uses: TerrenceHo/cache-always@v0.0.1
         with:
           path: data/raw
-          key: LGD-Monitor-Changes-${{ steps.date.outputs.date }}
+          key: LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}
 
       - name: Monitor site for changes
         id: monitor-changes
@@ -155,7 +155,7 @@ jobs:
         uses: TerrenceHo/cache-always@v0.0.1
         with:
           path: data/raw
-          key: LGD-Monitor-Changes-${{ steps.date.outputs.date }}
+          key: LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}
 
       - id: issue-body-creator
         env:

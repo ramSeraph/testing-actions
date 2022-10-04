@@ -23,5 +23,7 @@ jobs:
           echo 
           echo "old-ids: $old_ids"
           cat $err_file
+          delete_cache_by_ids $old_ids
+          
         env:
           GITHUB_TOKEN: "${{ github.token }}"

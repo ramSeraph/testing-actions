@@ -58,4 +58,7 @@ function delete_cache_by_ids {
     record_call "$@"
     echo
     echo "deleting ids $@"
+    for cache_id; do
+        echo gh api --method DELETE -H "$gh_headers" /repos/${GITHUB_REPOSITORY}/actions/caches/${cache_id}
+    done
 }

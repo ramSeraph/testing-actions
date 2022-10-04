@@ -17,6 +17,6 @@ jobs:
       - run: |
           source .github/scripts/cfuncs.sh
           get_cache_info
-          delete_caches "LGD-Monitor-Changes-.*" 0.04
+          delete_caches "buildkit-blob-1-.*" 0.04
         env:
           GITHUB_TOKEN: "${{ github.token }}"

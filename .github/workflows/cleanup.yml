@@ -17,12 +17,6 @@ jobs:
       - run: |
           source .github/scripts/cfuncs.sh
           get_cache_info
-          echo
-          echo "got main cache"
-          old_ids="$(get_old_ids "LGD-Monitor-Changes-.*" 0.04 | tr '\n' ' ')"
-          echo 
-          echo "old-ids: $old_ids"
-          cat $err_file
-          delete_cache_by_ids $old_ids
+          delete_caches "LGD-Monitor-Changes-.*" 0.04
         env:
           GITHUB_TOKEN: "${{ github.token }}"

@@ -44,7 +44,7 @@ jobs:
         id: date
 
       - name: Cache changes
-        uses: actions/cache@v2
+        uses: TerrenceHo/cache-always@v0.0.1
         with:
           path: data/raw
           key: LGD-Monitor-Changes-${{ steps.date.outputs.date }}
@@ -152,7 +152,7 @@ jobs:
         run: echo "::set-output name=date::$(date +'%d%b%Y')"
         id: date
       - name: Cache changes
-        uses: actions/cache@v2
+        uses: TerrenceHo/cache-always@v0.0.1
         with:
           path: data/raw
           key: LGD-Monitor-Changes-${{ steps.date.outputs.date }}

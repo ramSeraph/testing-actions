@@ -41,16 +41,16 @@ function get_old_ids {
         echo "match param missing" >>$err_file
         exit 1
     fi
-    #older_than_in_days="$2"
-    #if [[ ! "$older_than_in_days" =~ ^[0-9]+$ ]]; then
-    #    echo "older_than_in_days param $older_than_in_days is not a positive number" >>$err_file
-    #    exit 1
-    #fi
-    #cutoff=$(( curr_time - 86400 * older_than_in_days ))
-    cutoff=$2
+    older_than_in_days="$2"
+    if [[ ! "$older_than_in_days" =~ ^[0-9\.]+$ ]]; then
+        echo "older_than_in_days param $older_than_in_days is not a positive number" >>$err_file
+        exit 1
+    fi
+    cutoff=$(( curr_time - 86400 * older_than_in_days ))
+    cutoff=$( echo ${cutoff}/1 | bc )
 
     #ids="$(get_cache_info | jq --arg c "$cutoff" --arg f "$match" '.actions_caches[] | select(.last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 < ($c | tonumber)) | select(.key | test($f)) | .id' 2>>$err_file)"
-    ids="$(get_cache_info | jq --arg c "$cutoff" --arg f "$match" '.actions_caches[] | select(.last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 < ($c | tonumber)) | .id' 2>>$err_file)"
+    ids="$(get_cache_info | jq --arg c "$cutoff" --arg f "$match" '.actions_caches[] | select(.last_accessed_at | sub("\\.[0-9]+Z$";"Z") | fromdateiso8601 < ($c | tonumber)) | select(.key | test($f)) | .id' 2>>$err_file)"
     echo $ids
 }
 

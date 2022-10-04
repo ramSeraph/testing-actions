@@ -1,9 +1,5 @@
 [
   {
-    "dropdown": [ "Download Directory", "STATE", "All States of India" ],
-    "comp": "STATES"
-  },
-  {
     "dropdown": [ "Download Directory", "DISTRICT", "All Districts of India" ],
     "comp": "DISTRICTS"
   },

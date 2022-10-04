@@ -207,7 +207,7 @@ jobs:
       - LGD-Issue-Creator
     if: |
        needs.Run-LGD-Monitor.outputs.changes != 'none' &&
-       needs.LGD-Issue-Creator.outputs.create == 'yes'
+       needs.LGD-Issue-Creator.outputs.create == 'true'
     uses: ./.github/workflows/common-pb-alert.yml
     secrets: inherit
     with:

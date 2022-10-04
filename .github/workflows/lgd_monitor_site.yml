@@ -47,8 +47,9 @@ jobs:
         uses: TerrenceHo/cache-always@v0.0.1
         with:
           path: data/raw
-          key: LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}
-
+          key: LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}-${{ github.run_number }}-${{ github.run_attempt }}
+          restore-keys: |
+            LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}-${{ github.run_number }}-
       - name: Monitor site for changes
         id: monitor-changes
         run: |
@@ -94,6 +95,8 @@ jobs:
 
       - name: Get Id of last issue
         id: get-next-id
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           last_issue_number="${{ steps.last-issue.outputs.issue-number }}"
           if [[ "$last_issue_number" != "" ]]; then
@@ -156,7 +159,9 @@ jobs:
         uses: TerrenceHo/cache-always@v0.0.1
         with:
           path: data/raw
-          key: LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}
+          key: LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}-${{ github.run_number }}-${{ github.run_attempt }}
+          restore-keys: |
+            LGD-Monitor-Changes-v1-${{ steps.date.outputs.date }}-${{ github.run_number }}-
 
       - id: issue-body-creator
         env:

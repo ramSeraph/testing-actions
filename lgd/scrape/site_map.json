@@ -27,11 +27,6 @@
     "ignore_reason": "handled in SUB_DISTRICTS"
   },
   {
-    "dropdown": [ "Download Directory", "VILLAGE", "All Villages of India" ],
-    "comp": "IGNORE",
-    "ignore_reason": "handled in VILLAGES"
-  },
-  {
     "dropdown": [ "Download Directory", "VILLAGE", "All Villages of a State" ],
     "comp": "VILLAGES"
   },

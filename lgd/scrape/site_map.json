@@ -1,5 +1,9 @@
 [
   {
+    "dropdown": [ "Download Directory", "STATE", "All States of India" ],
+    "comp": "STATES"
+  },
+  {
     "dropdown": [ "Download Directory", "DISTRICT", "All Districts of India" ],
     "comp": "DISTRICTS"
   },
@@ -139,7 +143,10 @@
   },
   {
     "dropdown": [ "Download Directory", "Parliament/Assembly Constituency", "Parliament Constituency or Assembly Constituency of a State/India" ],
-    "comp":  ["CONSTITUENCIES_ASSEMBLY", "CONSTITUENCIES_PARLIAMENT"]
+    "comp": {
+      "CONSTITUENCIES_ASSEMBLY": ["All State", "Assembly Constituency"],
+      "CONSTITUENCIES_PARLIAMENT": ["All State", "Parliament Constituency"]
+    }
   },
   {
     "dropdown": [ "Download Directory", "Parliament/Assembly Constituency", "Constituency Coverage Details" ],

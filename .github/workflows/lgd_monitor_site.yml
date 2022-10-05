@@ -101,7 +101,7 @@ jobs:
           set -euo pipefail
           last_issue_number="${{ steps.last-issue.outputs.issue-number }}"
           if [[ "$last_issue_number" != "" ]]; then
-            title="$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/issues/$last_issue_number | jq '.title')"
+            title="$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/issues/$last_issue_number | jq -r '.title')"
             echo "title = $title"
             next_id=$(echo "$title" | sed 's/^${{env.ISSUE_TITLE}} - //g')
             echo "prev id is $next_id"

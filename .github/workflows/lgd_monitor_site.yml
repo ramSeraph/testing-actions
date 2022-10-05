@@ -104,6 +104,10 @@ jobs:
             title="$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/issues/$last_issue_number | jq '.title')"
             next_id=$(echo "$title" | sed "s/$ISSUE_TITLE - \([0-9]+\)/\1/g")
             echo "prev id is $next_id"
+            re='^[0-9]+$'
+            if ! [[ $next_id =~ $re ]] ; then
+              echo "error: Not a number" >&2; exit 1
+            fi
             next_id=$(( next_id + 1 ))
           else
             next_id=0

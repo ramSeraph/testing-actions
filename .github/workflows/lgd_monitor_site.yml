@@ -102,7 +102,8 @@ jobs:
           last_issue_number="${{ steps.last-issue.outputs.issue-number }}"
           if [[ "$last_issue_number" != "" ]]; then
             title="$(gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/issues/$last_issue_number | jq '.title')"
-            next_id=$(echo "$title" | sed "s/^$ISSUE_TITLE - //g")
+            echo "title = $title"
+            next_id=$(echo "$title" | sed 's/^${{env.ISSUE_TITLE}} - //g')
             echo "prev id is $next_id"
             re='^[0-9]+$'
             if ! [[ $next_id =~ $re ]] ; then

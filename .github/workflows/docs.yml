@@ -29,7 +29,7 @@ jobs:
           npm install
           export BASE_FOLDER="/${{ github.event.repository.name }}"
           npx @11ty/eleventy --pathprefix=${BASE_FOLDER}/
-      - deploy:
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,31 @@
+{%- assign page_paths = site.header_pages | reverse -%}
+<header>
+  <div class="menu">
+    <ul>
+      {%- for path in page_paths -%}
+        {% assign my_entry = collections.all | first %}
+        {% assign path_cmp = './' | append: path %}
+        {%- assign my_entry = collections.all | where: "data.page.inputPath", path_cmp | first -%}
+        {%- assign title = my_entry.data.menutitle | default: my_entry.data.title -%}
+        {%- if title -%}
+        <li>
+            <a href="{% myBase %}{{ my_entry.page.url }}">{{ title | escape }}</a>
+          {%- if my_entry.data.permalink -%}
+            {%- assign children = collections.all | where: "data.parent", my_entry.data.permalink -%}
+            {%- if children != empty -%}
+          <ul>
+              {%- for child in children -%}
+                {%- assign child_title = child.data.menutitle | default: child.data.title -%}
+                {%- if child_title -%}
+                <li><a href="{% myBase %}{{ child.page.url }}">{{ child_title | escape }}</a></li>
+                {%- endif -%}
+              {%- endfor -%}
+          </ul>
+            {%- endif -%}
+          {%- endif -%}
+        </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+</header>

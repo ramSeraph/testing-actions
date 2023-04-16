@@ -1,0 +1,25 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "Code for the website for this repo",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "ramSeraph",
+  "license": "UNLICENSE",
+  "type": "module",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.0",
+    "@11ty/eleventy-plugin-vite": "^4.0.0",
+    "markdown-it-deflist": "^2.1.0",
+    "sass": "^1.59.3",
+    "stylus": "^0.59.0"
+  },
+  "dependencies": {
+    "elm-pep": "^1.0.6",
+    "flatpickr": "^4.6.13",
+    "ol": "^7.3.0",
+    "ol-ext": "^4.0.6",
+    "subset-font": "^2.1.0"
+  }
+}

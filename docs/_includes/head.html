@@ -1,0 +1,77 @@
+{%- assign img_srcs = "https://tile.openstreetmap.org https://storage.googleapis.com https://*.google.com https://server.arcgisonline.com https://*.tile.opentopomap.org" -%}
+{%- assign connect_srcs = "https://storage.googleapis.com https://raw.githubusercontent.com" -%}
+{%- if site.environment == 'development' -%}
+    {%- capture connect_srcs -%}
+        {{ connect_srcs | append: " http://127.0.0.1:* ws://127.0.0.1:*" }}
+    {%- endcapture -%}
+{%- endif -%}
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src 'self' https://unpkg.com https://cdn.jsdelivr.net;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net https://viglino.github.io;
+  img-src 'self' {{ img_srcs }} data:;
+  font-src 'self' https://fonts.gstatic.com https://viglino.github.io;
+  connect-src 'self' {{ connect_srcs }};
+  media-src 'self';
+  object-src 'self';
+  child-src 'self';
+  form-action 'self' 'unsafe-inline';
+  base-uri 'self';
+  worker-src 'self' blob:
+  " />
+  <meta http-equiv="X-XSS-Protection"  content="1;mode=block" always>
+  <meta http-equiv="Referrer-Policy" content="no-referrer, strict-origin-when-cross-origin">
+
+  <title>{{ title }}</title>
+
+  <link rel="shortcut icon" type="image/svg+xml" href="{{ "/assets/images/favicon.svg" }}"/>
+
+  {%- if robots -%}
+    <meta name="robots" content="{{page.robots}}" />
+  {%- endif -%}
+
+  <link rel="stylesheet" type="text/css" href="{{ "/assets/css/main-dark.css" }}">
+    
+  {%- if custom-css-list -%}
+    {%- for css_info in custom-css-list -%}
+      {%- if css_info.abs == true -%}
+      <link href="{{ css_info.url }}" rel="stylesheet" property="stylesheet" type="text/css">
+      {%- else -%}
+      <link href="{% myBase %}{{ css_info.url }}" rel="stylesheet" property="stylesheet" type="text/css">
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+
+  {% if custom-js-list %}
+    {% for js_info in custom-js-list %}
+      {% assign extra = "" %}
+      {%- if js_info.async == true -%}
+        {%- capture extra -%}
+        {{ extra | append: " async" }}
+        {%- endcapture -%}
+      {%- endif -%}
+      {%- if js_info.module == true -%}
+        {%- capture extra -%}
+        {{ extra | append: " type='module'" }}
+        {%- endcapture -%}
+      {%- endif -%}
+      {%- if js_info.defer == true -%}
+        {%- capture extra -%}
+        {{ extra | append: " defer" }}
+        {%- endcapture -%}
+      {%- endif -%}
+      {%- assign url = js_info.url -%}
+      {%- if js_info.abs != true -%}
+        {%- capture url -%}
+        {{ js_info.url }}
+        {%- endcapture -%}
+      {%- endif -%}
+
+      <script src="{{ url }}" {{extra}}></script>
+    {% endfor %}
+  {% endif %}
+</head>

@@ -1,0 +1,29 @@
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-eleventybuild-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-eleventybuild-
+      - name: Build the site
+        run: |
+          cd docs
+          npm install
+          export BASE_FOLDER="/${{ github.event.repository.name }}"
+          npx @11ty/eleventy --pathprefix=${BASE_FOLDER}/
+      - deploy:
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: './docs/_site/'

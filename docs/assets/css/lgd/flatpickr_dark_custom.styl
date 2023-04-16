@@ -1,0 +1,35 @@
+// $genBackground = #101010
+$genBackground = black
+$calendarBackground = $genBackground
+$calendarBorderColor = lighten($genBackground, 5%)
+
+$monthForeground = #dbdbdb
+$monthBackground = $genBackground
+
+$weekdaysBackground = transparent
+$weekdaysForeground = darken($monthForeground, 50%)
+
+$dayForeground = alpha(white, 0.90)
+$dayHoverBackground = lighten($calendarBackground, 25%)
+
+$todayColor = darken($dayForeground, 25%)
+$today_fg_color = $dayForeground
+
+// $selectedDayBackground = #009485
+$selectedDayBackground = $dayForeground
+$selectedDayForeground = $genBackground
+
+$nonCurrentMonthDayForeground = alpha($dayForeground, 0.5)
+$disabledDayForeground = alpha($dayForeground, 0.3)
+
+$arrow_hover_color = lighten($dayForeground, 70%)
+
+// flatpickr path is configured in docs/eleventy.config.cjs
+@require "flatpickr"
+
+.flatpickr-day
+  &.notAllowed, &.notAllowed.prevMonthDay, &.notAllowed.nextMonthDay
+    color $nonCurrentMonthDayForeground
+
+  &.flatpickr-disabled, &.flatpickr-disabled:hover
+    color $disabledDayForeground

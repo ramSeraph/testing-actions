@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src 'self' https://unpkg.com https://cdn.jsdelivr.net;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdn.jsdelivr.net https://viglino.github.io;
+  img-src 'self' https://tile.openstreetmap.org https://storage.googleapis.com https://*.google.com https://server.arcgisonline.com https://*.tile.opentopomap.org data:;
+  font-src 'self' https://fonts.gstatic.com https://viglino.github.io;
+  connect-src 'self' https://storage.googleapis.com https://raw.githubusercontent.com http://127.0.0.1:* ws://127.0.0.1:*;
+  media-src 'self';
+  object-src 'self';
+  child-src 'self';
+  form-action 'self' 'unsafe-inline';
+  base-uri 'self';
+  worker-src 'self' blob:
+  " />
+  <meta http-equiv="X-XSS-Protection"  content="1;mode=block" always>
+  <meta http-equiv="Referrer-Policy" content="no-referrer, strict-origin-when-cross-origin">
+
+  <title>LGD</title>
+
+  <link rel="shortcut icon" type="image/svg+xml" href="/testing-actions/assets/favicon-13cc4de2.svg"/>
+    
+      
+    
+  
+  <script type="module" crossorigin src="/testing-actions/assets/index-aa45acf2.js"></script>
+  <link rel="stylesheet" href="/testing-actions/assets/index-f919a708.css">
+  <link rel="stylesheet" href="/testing-actions/assets/main-dark-23ba1f77.css">
+</head>
+
+
+    <body>
+        <div class="container">
+
+            <header>
+  <div class="menu">
+    <ul>
+        <li>
+            <a href="/testing-actions/about">About</a></li>
+        <li>
+            <a href="/testing-actions/maps/SOI/">SOI</a><ul><li><a href="/testing-actions/maps/SOI/compare">SOI Demo Page</a></li><li><a href="/testing-actions/maps/SOI/notes">SOI collection notes</a></li><li><a href="/testing-actions/maps/SOI/sheets">SOI Open Series Maps Sheet Listing</a></li><li><a href="/testing-actions/maps/SOI/status">SOI Extraction Status</a></li></ul></li>
+        <li>
+            <a href="/testing-actions/bbnl/">BBNL</a><ul><li><a href="/testing-actions/bbnl/anatomy">BBNL Archive Details</a></li></ul></li>
+        <li>
+            <a href="/testing-actions/lgd/">LGD</a><ul><li><a href="/testing-actions/lgd/anatomy">LGD Archive Anatomy</a></li><li><a href="/testing-actions/lgd/archives">LGD Archive Listing</a></li></ul></li>
+        <li>
+            <a href="/testing-actions/">Home</a></li></ul>
+  </div>
+</header>
+
+
+            <main>
+                
+<p>Collection of Data from <a href="https://lgdirectory.gov.in">Local Government Directory</a> - <a href="https://lgdirectory.gov.in/copyRightPolicy.do">Copyright Policy</a>(<a href="https://web.archive.org/web/20230322190637/https://lgdirectory.gov.in/copyRightPolicy.do">archived</a>)</p>
+<p><a href="https://github.com/ramSeraph/opendata//tree/master/lgd">Code</a> used to extract this data.</p>
+<h1>Notes</h1>
+<p>Some of the data present here is also available at <a href="https://data.gov.in/catalog/local-government-directory-lgd">data.gov.in</a>(updated monthly)</p>
+<p>The archives use a zip format which is not understood by the standard unix <code>unzip</code> tool. Use <a href="https://www.7-zip.org/">7zip</a> to extract the data from the archives instead.</p>
+<h1>Data</h1>
+<p><a href="archives">List Of All Daily Archives</a></p>
+<p><a href="anatomy">Description</a> of data in the archive</p>
+<h1>Get Archive for date</h1>
+<hr>
+<div id="archive_date" class="flatpickr"></div>
+<br>
+<span id='form_status'></span>
+
+
+            </main>
+
+            <footer>
+  Source Code at: <a href="https://github.com/ramSeraph/testing-actions">Github</a>
+</footer>
+
+
+        </div>
+    </body>
+</html>

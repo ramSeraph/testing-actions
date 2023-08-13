@@ -77,6 +77,9 @@ runs:
     - name: Create Release
       id: create-release
       shell: bash
+      env:
+        GH_TOKEN: "${{ inputs.gh_token }}"
+        ERR_FILE: error_file.txt
       run: |
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
         create_release_with_assets "${{ inputs.tag_name }}-new" "${{ inputs.name }} new" "${{ inputs.body }}" "${{ inputs.assets }}"

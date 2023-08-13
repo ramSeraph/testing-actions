@@ -25,15 +25,21 @@ function has_release {
 
 function move_release {
     record_call "$@"
-    export from_id=$1
-    export to=$2
+    from_id=$1
+    to=$2
     gh api --method PATCH -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to" 2>>$err_file
+}
+
+function delete_release {
+    record_call "$@"
+    rid=$1
+    gh api --method DELETE -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/$rid
 }
 
 function download_release_assets {
     record_call "$@"
-    export from_id=$1
-    export out_dir=$2
+    from_id=$1
+    out_dir=$2
 
     lines=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/${from_id}/assets 2>>$err_file | jq -r '.[] | "\(.id),\(.name)"')
     for line in $(echo $lines)
@@ -43,5 +49,4 @@ function download_release_assets {
         echo "downloading $name"
         gh api -H "Accept: application/octet-stream" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/assets/$id > ${out_dir}/${name}
     done
-
 }

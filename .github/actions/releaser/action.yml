@@ -1,7 +1,11 @@
 name: Common Make Release
 inputs:
   name: 
-    description: 'Name of release and tag to use'
+    description: 'Name of the release'
+    required: true
+    type: string
+  tag_name: 
+    description: 'tag to use'
     required: true
     type: string
   assets:
@@ -33,13 +37,13 @@ runs:
         ERR_FILE: error_file.txt
       run: |
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
-        echo "base-hasrelease=$(has_release ${{ inputs.name }})" >> $GITHUB_OUTPUT
-        echo "old-hasrelease=$(has_release ${{ inputs.name }}-old)" >> $GITHUB_OUTPUT
-        echo "new-hasrelease=$(has_release ${{ inputs.name }}-new)" >> $GITHUB_OUTPUT
+        echo "base-hasrelease=$(has_release ${{ inputs.tag_name }})" >> $GITHUB_OUTPUT
+        echo "old-hasrelease=$(has_release ${{ inputs.tag_name }}-old)" >> $GITHUB_OUTPUT
+        echo "new-hasrelease=$(has_release ${{ inputs.tag_name }}-new)" >> $GITHUB_OUTPUT
 
-        echo "base-releaseid=$(get_release_id ${{ inputs.name }})" >> $GITHUB_OUTPUT
-        echo "old-releaseid=$(get_release_id ${{ inputs.name }}-old)" >> $GITHUB_OUTPUT
-        echo "new-releaseid=$(get_release_id ${{ inputs.name }}-new)" >> $GITHUB_OUTPUT
+        echo "base-releaseid=$(get_release_id ${{ inputs.tag_name }})" >> $GITHUB_OUTPUT
+        echo "old-releaseid=$(get_release_id ${{ inputs.tag_name }}-old)" >> $GITHUB_OUTPUT
+        echo "new-releaseid=$(get_release_id ${{ inputs.tag_name }}-new)" >> $GITHUB_OUTPUT
 
 
     - name: Release Pre Checks
@@ -77,8 +81,8 @@ runs:
           ${{ inputs.body }}
           Git Ref ${{ github.sha }}
           Release Date ${{ steps.date.outputs.date }}
-        tag_name: ${{ inputs.name }}-new
-        name: ${{ inputs.name }}-new
+        tag_name: ${{ inputs.tag_name }}-new
+        name: ${{ inputs.name }} new
         fail_on_unmatched_files: true
         files: ${{ inputs.assets }}
 
@@ -102,7 +106,7 @@ runs:
       if: ${{ steps.release-info.outputs.base-hasrelease == 'yes' }}
       run: |
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
-        move_release "${{ steps.release-info.outputs.base-releaseid }}" "${{ inputs.name }}-old"
+        move_release "${{ steps.release-info.outputs.base-releaseid }}" "${{ inputs.tag_name }}-old" "${{ inputs.name }} old"
 
     - name: Move New to Base Release
       shell: bash
@@ -113,7 +117,7 @@ runs:
       run: |
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
         new_release_id=$(get_release_id ${{ inputs.name }}-new)
-        move_release "$new_release_id" "${{ inputs.name }}"
+        move_release "$new_release_id" "${{ inputs.tag_name }}" "${{ inputs.name }}"
 
     - name: Debug Failures
       shell: bash

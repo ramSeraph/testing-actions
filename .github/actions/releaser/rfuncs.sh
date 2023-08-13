@@ -27,7 +27,8 @@ function move_release {
     record_call "$@"
     from_id=$1
     to=$2
-    gh api --method PATCH -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to" 2>>$err_file
+    to_name="$3"
+    gh api --method PATCH -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to_name" 2>>$err_file
 }
 
 function delete_release {

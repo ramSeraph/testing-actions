@@ -45,6 +45,7 @@ jobs:
       - name: Make release
         uses: ./.github/actions/releaser
         with:
+          name: test release name
           name: test-release
           assets: |
             asset1.txt

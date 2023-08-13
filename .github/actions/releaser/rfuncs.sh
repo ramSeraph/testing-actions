@@ -28,7 +28,7 @@ function create_release {
     tname="$1"
     name="$2"
     body="$3"
-    gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases -f tag_name="${tname}" -f name="${name}" -f body="${body}" 2>>$err_file | jq .
+    gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases -f tag_name="${tname}" -f name="${name}" -f body="${body}" 2>>$err_file | jq .id
 }
 
 function upload_asset {

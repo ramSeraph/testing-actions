@@ -1,22 +1,22 @@
 name: Common Make Release
-on: 
-  inputs:
-    name: 
-      description: 'Name of release and tag to use'
-      required: true
-      type: string
-    assets:
-      description: 'list of assets to push.. multiple lines.. one asset_file_path per line'
-      required: true
-      type: string
-    body:
-      description: 'Body of text to be added to the release'
-      required: true
-      type: string
-    gh_token:
-      description: 'token to use to create releases'
-      required: true
-      type: string
+inputs:
+  name: 
+    description: 'Name of release and tag to use'
+    required: true
+    type: string
+  assets:
+    description: 'list of assets to push.. multiple lines.. one asset_file_path per line'
+    required: true
+    type: string
+  body:
+    description: 'Body of text to be added to the release'
+    required: true
+    type: string
+  gh_token:
+    description: 'token to use to create releases'
+    required: true
+    type: string
+
 runs:
   using: "composite"
   steps:
@@ -34,7 +34,7 @@ runs:
       run: |
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
         echo "base-hasrelease=$(has_release ${{ inputs.name }})" >> $GITHUB_OUTPUT
-        echo "hasrelease=$(has_release ${{ inputs.name }}-old)" >> $GITHUB_OUTPUT
+        echo "old-hasrelease=$(has_release ${{ inputs.name }}-old)" >> $GITHUB_OUTPUT
         echo "new-hasrelease=$(has_release ${{ inputs.name }}-new)" >> $GITHUB_OUTPUT
 
         echo "base-releaseid=$(get_release_id ${{ inputs.name }})" >> $GITHUB_OUTPUT

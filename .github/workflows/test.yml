@@ -49,3 +49,5 @@ jobs:
           assets: |
             asset1.txt
             asset2.txt
+          body: "testing things"
+          gh_token: ${{ secrets.github_token }}

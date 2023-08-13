@@ -17,13 +17,6 @@ on:
       description: 'token to use to create releases'
       required: true
       type: string
-
-env:
-  RELEASE: "{{ inputs.name }}"
-  GITHUB_TOKEN: "${{ inputs.gh_token }}"
-  GH_TOKEN: "${{ inputs.gh_token }}"
-  ERR_FILE: error_file.txt
-
 runs:
   using: "composite"
   steps:
@@ -35,15 +28,18 @@ runs:
     - name: Release Info
       shell: bash
       id: release-info
+      env:
+        GH_TOKEN: "${{ inputs.gh_token }}"
+        ERR_FILE: error_file.txt
       run: |
-        source .github/scripts/rfuncs.sh
-        echo "base-hasrelease=$(has_release ${RELEASE})" >> $GITHUB_OUTPUT
-        echo "hasrelease=$(has_release ${RELEASE}-old)" >> $GITHUB_OUTPUT
-        echo "new-hasrelease=$(has_release ${RELEASE}-new)" >> $GITHUB_OUTPUT
+        source ${GITHUB_ACTION_PATH}/rfuncs.sh
+        echo "base-hasrelease=$(has_release ${{ inputs.name }})" >> $GITHUB_OUTPUT
+        echo "hasrelease=$(has_release ${{ inputs.name }}-old)" >> $GITHUB_OUTPUT
+        echo "new-hasrelease=$(has_release ${{ inputs.name }}-new)" >> $GITHUB_OUTPUT
 
-        echo "base-releaseid=$(get_release_id ${RELEASE})" >> $GITHUB_OUTPUT
-        echo "old-releaseid=$(get_release_id ${RELEASE}-old)" >> $GITHUB_OUTPUT
-        echo "new-releaseid=$(get_release_id ${RELEASE}-new)" >> $GITHUB_OUTPUT
+        echo "base-releaseid=$(get_release_id ${{ inputs.name }})" >> $GITHUB_OUTPUT
+        echo "old-releaseid=$(get_release_id ${{ inputs.name }}-old)" >> $GITHUB_OUTPUT
+        echo "new-releaseid=$(get_release_id ${{ inputs.name }}-new)" >> $GITHUB_OUTPUT
 
 
     - name: Release Pre Checks
@@ -81,8 +77,8 @@ runs:
           ${{ inputs.body }}
           Git Ref ${{ github.sha }}
           Release Date ${{ steps.date.outputs.date }}
-        tag_name: ${{ env.RELEASE }}-new
-        name: ${{ env.RELEASE }}-new
+        tag_name: ${{ inputs.name }}-new
+        name: ${{ inputs.name }}-new
         fail_on_unmatched_files: true
         files: ${{ inputs.assets }}
 
@@ -92,28 +88,34 @@ runs:
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
       with:
         delete_release: true
-        tag_name: "${{ env.RELEASE }}-old"
+        tag_name: "${{ inputs.name }}-old"
 
     - name: Move Base to Old Release
       shell: bash
-      id: pre-release-check
+      env:
+        GH_TOKEN: "${{ inputs.gh_token }}"
+        ERR_FILE: error_file.txt
+      id: release-backup
       if: ${{ steps.release-info.outputs.base-hasrelease == 'yes' }}
       run: |
-        source .github/scripts/rfuncs.sh
-        move_release "${{ steps.release-info.outputs.base-releaseid }}" "${RELEASE}" "${RELEASE}-old"
+        source ${GITHUB_ACTION_PATH}/rfuncs.sh
+        move_release "${{ steps.release-info.outputs.base-releaseid }}" "${{ inputs.name }}" "${{ inputs.name }}-old"
 
     - name: Move New to Base Release
       shell: bash
-      id: pre-release-check
+      id: move-new
+      env:
+        GH_TOKEN: "${{ inputs.gh_token }}"
+        ERR_FILE: error_file.txt
       run: |
-        source .github/scripts/rfuncs.sh
-        new_release_id=$(get_release_id ${RELEASE}-new)
-        move_release "$new_release_id" "${RELEASE}-new" "${RELEASE}"
+        source ${GITHUB_ACTION_PATH}/rfuncs.sh
+        new_release_id=$(get_release_id ${{ inputs.name }}-new)
+        move_release "$new_release_id" "${{ inputs.name }}-new" "${{ inputs.name }}"
 
     - name: Debug Failures
       shell: bash
-      id: pre-release-check
+      id: debug-failures
       if: failure()
       run: |
-        cat ${ERR_FILE}
+        cat error_file.txt
 

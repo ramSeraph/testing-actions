@@ -8,24 +8,19 @@ function record_call {
 
 function get_release_id {
     record_call "$@"
-    set +e
-    release_id="$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/tags/$1 2>>$err_file | jq '.id' 2>>$err_file)"
-    set -e
+    tname=$1
+    release_id="$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases 2>>$err_file | jq --arg tname $tname '.[] | select( .tag_name == $tname) | .id' 2>>$err_file)"
     echo $release_id
 }
 
 function has_release {
     record_call "$@"
-    export rname=$1
-    release_names="$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases 2>>$err_file | jq -r '.[].name' 2>>$err_file)"
-    set +e
-    echo "$release_names" | grep -q "^$rname$" 2>>$err_file
-    if [[ $? == 0 ]]; then
-        echo "yes"
-    else
+    rid="$(get_release_id $1)"
+    if [[ "$rid" == "" ]]; then 
         echo "no"
+    else
+        echo "yes"
     fi
-    set -e
 }
 
 function move_release {
@@ -33,7 +28,6 @@ function move_release {
     export from_id=$1
     export to=$2
     gh api --method PATCH -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to" 2>>$err_file
-    gh api --method PATCH -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases/$from_id -F draft=false 2>>$err_file
 }
 
 function download_release_assets {

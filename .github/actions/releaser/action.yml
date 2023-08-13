@@ -91,7 +91,6 @@ runs:
       with:
         delete_release: true
         tag_name: "${{ inputs.name }}-old"
-        github_token: ${{ inputs.gh_token }}
 
     - name: Move Base to Old Release
       shell: bash

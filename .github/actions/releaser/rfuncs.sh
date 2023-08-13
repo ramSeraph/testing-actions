@@ -32,7 +32,7 @@ function move_release {
     record_call "$@"
     export from_id=$1
     export to=$2
-    gh api --method PATCH -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28"  /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to" 2>>$err_file
+    gh api --method PATCH -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28"  /repos/${GITHUB_REPOSITORY}/releases/$from_id -f tag_name="$to" -f name="$to" -F draft=false -F prerelease=false 2>>$err_file
 }
 
 function download_release_assets {

@@ -28,15 +28,15 @@ function create_release {
     tname="$1"
     name="$2"
     body="$3"
-    gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases -f tag_name="${tname}" -f name="${name}" -f body="${body}" 2>>$err_file
+    gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases -f tag_name="${tname}" -f name="${name}" -f body="${body}" 2>>$err_file | jq .
 }
 
 function upload_asset {
     record_call "$@"
     tag_name="$1"
     fname="$2"
-    echo "uploading asset $fname"
-    gh release upload $tag_name $fname
+    echo "uploading asset $fname" >>$err_file
+    gh release upload $tag_name $fname >>$err_file 2>>$err_file
 }
 
 function create_release_with_assets {

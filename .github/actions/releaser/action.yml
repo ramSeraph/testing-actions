@@ -86,7 +86,11 @@ runs:
       id: delete-old-release
       if: ${{ steps.release-info.outputs.old-hasrelease == 'yes' }}
       shell: bash
+      env:
+        GH_TOKEN: "${{ inputs.gh_token }}"
+        ERR_FILE: error_file.txt
       run: |
+        source ${GITHUB_ACTION_PATH}/rfuncs.sh
         delete_release ${{ steps.release-info.outputs.old-releaseid }}
 
     - name: Move Base to Old Release

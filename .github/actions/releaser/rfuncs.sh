@@ -28,16 +28,15 @@ function create_release {
     tname="$1"
     name="$2"
     body="$3"
-    gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases -f tag_name="${tname}" -f name="${name}" -f body="${body}" 2>>$err_file | jq '.id'
+    gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${GITHUB_REPOSITORY}/releases -f tag_name="${tname}" -f name="${name}" -f body="${body}" 2>>$err_file
 }
 
 function upload_asset {
     record_call "$@"
-    rid="$1"
+    tag_name="$1"
     fname="$2"
-    aname="$(basename $fname)"
     echo "uploading asset $fname"
-    gh api --method POST -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" --hostname "uploads.github.com" /repos/${GITHUB_REPOSITORY}/releases/${rid}/assets?name=$aname -f "@$fname" 2>>$err_file
+    gh release upload $tag_name $fname
 }
 
 function create_release_with_assets {
@@ -46,8 +45,8 @@ function create_release_with_assets {
     name="$2"
     body="$3"
     files="$4"
-    rid="$(create_release "$tname" "$name" "$body")"
-    echo "$files" | while IFS= read -r file; do upload_asset "$rid" "$file"; done
+    create_release "$tname" "$name" "$body"
+    echo "$files" | while IFS= read -r file; do upload_asset "$tname" "$file"; done
 }
 
 function move_release {

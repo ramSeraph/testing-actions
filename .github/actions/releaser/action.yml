@@ -22,7 +22,7 @@ runs:
   steps:
     - name: Get current date
       shell: bash
-      run: echo "date=$(date +'%d%b%Y %H:%M:%S')"
+      run: echo "date=$(date +'%d%b%Y %H:%M:%S')" >> $GITHUB_OUTPUT
       id: date
 
     - name: Release Info

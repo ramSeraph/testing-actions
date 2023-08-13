@@ -15,11 +15,11 @@ jobs:
     steps:
 
       - name: Get current date
-        run: echo "::set-output name=date::$(date +'%d%b%Y %H:%M:%S')"
+        run: echo "date=$(date +'%d%b%Y %H:%M:%S')" >> $GITHUB_OUTPUT
         id: date
 
       - name: Get Random
-        run:  echo "::set-output name=rand::$RANDOM"
+        run:  echo "rand=$RANDOM" >> $GITHUB_OUTPUT
         id: random
 
       - uses: actions/checkout@v3

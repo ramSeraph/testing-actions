@@ -85,10 +85,11 @@ runs:
     - name: Delete Old Release
       id: delete-old-release
       if: ${{ steps.release-info.outputs.old-hasrelease == 'yes' }}
-      uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      uses: dev-drprasad/delete-tag-and-release@v0.2.1
       with:
         delete_release: true
         tag_name: "${{ inputs.name }}-old"
+        github_token: ${{ inputs.gh_token }}
 
     - name: Move Base to Old Release
       shell: bash

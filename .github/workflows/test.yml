@@ -1,0 +1,51 @@
+name: Test Run
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on: 
+  workflow_dispatch:
+
+
+jobs:
+  Test-Job:
+    timeout-minutes: 30
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: Get current date
+        run: echo "::set-output name=date::$(date +'%d%b%Y %H:%M:%S')"
+        id: date
+
+      - name: Get Random
+        run:  echo "::set-output name=rand::$RANDOM"
+        id: random
+
+      - uses: actions/checkout@v3
+
+      - name: Create assets
+        run: |
+          touch asset1.txt
+          export rand="${{ steps.random.outputs.rand }}"
+          for i in {1..50000}
+          do
+            echo "blah1 $rand $i" >> asset1.txt
+            echo >> asset1.txt
+          done
+          touch asset2.txt
+          export rand="${{ steps.random.outputs.rand }}"
+          for i in {1..50000}
+          do
+            echo "blah2 $rand $i" >> asset2.txt
+            echo >> asset2.txt
+          done
+
+
+      - name: Make release
+        uses: ./.github/actions/releaser
+        with:
+          name: test-release
+          assets: |
+            asset1.txt
+            asset2.txt

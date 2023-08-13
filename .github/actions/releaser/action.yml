@@ -36,6 +36,7 @@ runs:
         GH_TOKEN: "${{ inputs.gh_token }}"
         ERR_FILE: error_file.txt
       run: |
+        echo "assets: ${{ inputs.assets }}"
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
         echo "base-hasrelease=$(has_release ${{ inputs.tag_name }})" >> $GITHUB_OUTPUT
         echo "old-hasrelease=$(has_release ${{ inputs.tag_name }}-old)" >> $GITHUB_OUTPUT

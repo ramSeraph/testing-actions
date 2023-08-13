@@ -54,6 +54,6 @@ jobs:
         with:
           name: test release name
           tag_name: test-release
-          assets: ${{ steps.mid.release_files }}
+          assets: ${{ steps.mid.outputs.release_files }}
           body: "testing things ${{ steps.random.outputs.rand }}"
           gh_token: ${{ secrets.github_token }}

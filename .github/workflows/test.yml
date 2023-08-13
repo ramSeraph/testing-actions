@@ -41,14 +41,19 @@ jobs:
             echo >> asset2.txt
           done
 
+      - name: Name Step
+        id: mid
+        run: |
+          echo "release_files<<EOF" >> $GITHUB_OUTPUT
+          echo "asset1.txt" >> $GITHUB_OUTPUT
+          echo "asset2.txt" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Make release
         uses: ./.github/actions/releaser
         with:
           name: test release name
           tag_name: test-release
-          assets: |
-            asset1.txt
-            asset2.txt
+          assets: ${{ steps.mid.release_files }}
           body: "testing things ${{ steps.random.outputs.rand }}"
           gh_token: ${{ secrets.github_token }}

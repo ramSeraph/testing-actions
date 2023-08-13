@@ -46,7 +46,7 @@ jobs:
         uses: ./.github/actions/releaser
         with:
           name: test release name
-          name: test-release
+          tag_name: test-release
           assets: |
             asset1.txt
             asset2.txt

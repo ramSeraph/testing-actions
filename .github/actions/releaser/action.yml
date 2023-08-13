@@ -86,6 +86,8 @@ runs:
       id: delete-old-release
       if: ${{ steps.release-info.outputs.old-hasrelease == 'yes' }}
       uses: dev-drprasad/delete-tag-and-release@v0.2.1
+      env:
+        GITHUB_TOKEN: ${{ inputs.gh_token }}
       with:
         delete_release: true
         tag_name: "${{ inputs.name }}-old"

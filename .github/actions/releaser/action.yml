@@ -76,16 +76,10 @@ runs:
 
     - name: Create Release
       id: create-release
-      uses: softprops/action-gh-release@v1
-      with:
-        body: |
-          ${{ inputs.body }}
-          Git Ref ${{ github.sha }}
-          Release Date ${{ steps.date.outputs.date }}
-        tag_name: ${{ inputs.tag_name }}-new
-        name: ${{ inputs.name }} new
-        fail_on_unmatched_files: true
-        files: ${{ inputs.assets }}
+      shell: bash
+      run: |
+        source ${GITHUB_ACTION_PATH}/rfuncs.sh
+        create_release_with_assets "${{ inputs.tag_name }}-new" "${{ inputs.name }} new" "${{ inputs.body }}" "${{ inputs.assets }}"
 
     - name: Delete Old Release
       id: delete-old-release

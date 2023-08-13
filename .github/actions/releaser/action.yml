@@ -100,7 +100,7 @@ runs:
       if: ${{ steps.release-info.outputs.base-hasrelease == 'yes' }}
       run: |
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
-        move_release "${{ steps.release-info.outputs.base-releaseid }}" "${{ inputs.name }}" "${{ inputs.name }}-old"
+        move_release "${{ steps.release-info.outputs.base-releaseid }}" "${{ inputs.name }}-old"
 
     - name: Move New to Base Release
       shell: bash
@@ -111,7 +111,7 @@ runs:
       run: |
         source ${GITHUB_ACTION_PATH}/rfuncs.sh
         new_release_id=$(get_release_id ${{ inputs.name }}-new)
-        move_release "$new_release_id" "${{ inputs.name }}-new" "${{ inputs.name }}"
+        move_release "$new_release_id" "${{ inputs.name }}"
 
     - name: Debug Failures
       shell: bash

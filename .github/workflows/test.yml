@@ -49,5 +49,5 @@ jobs:
           assets: |
             asset1.txt
             asset2.txt
-          body: "testing things"
+          body: "testing things ${{ steps.random.outputs.rand }}"
           gh_token: ${{ secrets.github_token }}
